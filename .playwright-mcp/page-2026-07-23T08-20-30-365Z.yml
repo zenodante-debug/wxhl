@@ -1,0 +1,164 @@
+- generic [ref=e4]:
+  - complementary [ref=e5]:
+    - generic [ref=e6]: 无限回廊
+    - navigation [ref=e12]:
+      - button "状态档案" [ref=e13] [cursor=pointer]
+      - button "副本情报" [ref=e18] [cursor=pointer]
+      - button "敌情警戒 0" [ref=e23] [cursor=pointer]:
+        - generic [ref=e27]: 敌情警戒
+        - generic [ref=e28]: "0"
+      - button "回廊地图" [ref=e29] [cursor=pointer]
+      - button "职业树" [ref=e36] [cursor=pointer]
+      - button "回廊通讯" [ref=e46] [cursor=pointer]
+    - button "折叠全部 折叠全部面板" [ref=e53] [cursor=pointer]:
+      - generic [ref=e56]: 折叠全部
+      - text: 折叠全部面板
+  - main [ref=e57]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - generic [ref=e60] [cursor=pointer]: ◆ 当前环境坐标
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]: 当前世界
+            - generic [ref=e68]: 现实
+          - generic [ref=e69]:
+            - generic [ref=e70]: 现实日期
+            - generic [ref=e71]: "---"
+          - generic [ref=e72]:
+            - generic [ref=e73]: 现实时间
+            - generic [ref=e74]: "---"
+          - generic [ref=e75]:
+            - generic [ref=e76]: 副本日期
+            - generic [ref=e77]: 不在副本中
+          - generic [ref=e78]:
+            - generic [ref=e79]: 客观时间
+            - generic [ref=e80]: 不在副本中
+          - generic [ref=e81]:
+            - generic [ref=e82]: 当前地点
+            - generic [ref=e83]: 未知
+          - generic [ref=e84]:
+            - generic [ref=e85]: 阶段进度
+            - generic [ref=e86]: 0%
+      - generic [ref=e87]:
+        - generic [ref=e88] [cursor=pointer]: ◆ 核心状态总览
+        - generic [ref=e92]:
+          - generic [ref=e93]:
+            - generic [ref=e94] [cursor=pointer]: 契约者档案
+            - generic [ref=e103]:
+              - generic [ref=e104]:
+                - generic [ref=e105]: 姓名
+                - generic [ref=e106]: "---"
+              - generic [ref=e107]:
+                - generic [ref=e108]: 等级
+                - generic [ref=e109]: Lv.1
+              - generic [ref=e110]:
+                - generic [ref=e111]: EXP
+                - generic [ref=e112]: 0 / 50
+              - generic [ref=e114]:
+                - generic [ref=e115]: 阶位
+                - generic [ref=e116]: 一阶
+              - generic [ref=e117]:
+                - generic [ref=e118]: 军衔
+                - generic [ref=e119]: 列兵
+              - generic [ref=e120]:
+                - generic [ref=e121]: RP
+                - generic [ref=e122]: 0 / 5
+              - generic [ref=e123]:
+                - generic [ref=e124]: CR
+                - generic [ref=e125]: "3.0"
+              - generic [ref=e126]:
+                - generic [ref=e127]: 回廊态度
+                - generic [ref=e128]: 观察
+              - generic [ref=e129]:
+                - generic [ref=e130]: 天赋
+                - generic [ref=e131]:
+                  - generic [ref=e132]:
+                    - generic [ref=e133]: 名称
+                    - generic [ref=e134]: 无
+                  - generic [ref=e135]: 品质
+                  - generic [ref=e137]: 属性加成
+              - generic [ref=e139]:
+                - generic [ref=e140]: 称号
+                - generic [ref=e141]:
+                  - generic [ref=e142]: 名称
+                  - generic [ref=e143]: 无
+          - generic [ref=e144]:
+            - generic [ref=e145] [cursor=pointer]: 属性面板
+            - generic [ref=e153]:
+              - generic [ref=e154]:
+                - generic [ref=e155]: STR 力量
+                - generic [ref=e156]: "5"
+              - generic [ref=e158]:
+                - generic [ref=e159]: AGI 敏捷
+                - generic [ref=e160]: "5"
+              - generic [ref=e162]:
+                - generic [ref=e163]: CON 体力
+                - generic [ref=e164]: "5"
+              - generic [ref=e166]:
+                - generic [ref=e167]: PER 感知
+                - generic [ref=e168]: "5"
+              - generic [ref=e170]:
+                - generic [ref=e171]: 未分配点数
+                - generic [ref=e172]: "0"
+              - generic [ref=e173]:
+                - generic [ref=e174]: 衍生属性
+                - generic [ref=e175]:
+                  - generic [ref=e176]: HP
+                  - generic [ref=e177]: 0 / 0
+                - generic [ref=e180]:
+                  - generic [ref=e181]: MP
+                  - generic [ref=e182]: 0 / 0
+                - generic [ref=e185]:
+                  - generic [ref=e186]: 耐力
+                  - generic [ref=e187]: 0 / 0
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: 防御
+                    - generic [ref=e193]: "0"
+                  - generic [ref=e194]:
+                    - generic [ref=e195]: 闪避
+                    - generic [ref=e196]: "0"
+                  - generic [ref=e197]:
+                    - generic [ref=e198]: 移距
+                    - generic [ref=e199]: 0m
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: 负重
+                    - generic [ref=e202]: 0 / 0kg
+          - generic [ref=e203]:
+            - generic [ref=e204] [cursor=pointer]: 状态 & 经济
+            - generic [ref=e213]:
+              - generic [ref=e214]:
+                - generic [ref=e215]: 生命状态
+                - generic [ref=e216]: 健康
+              - generic [ref=e217]:
+                - generic [ref=e218]: 特殊状态
+                - generic [ref=e219]: 无异常状态
+              - generic [ref=e220]:
+                - generic [ref=e221]: UP
+                - generic [ref=e222]: "0"
+          - generic [ref=e223]:
+            - generic [ref=e224] [cursor=pointer]: 赛季 & 排行
+            - generic [ref=e232]:
+              - generic [ref=e233]:
+                - generic [ref=e234]: 当前赛季
+                - generic [ref=e235]: "21"
+              - generic [ref=e236]:
+                - generic [ref=e237]: 副本周期
+                - generic [ref=e238]: 0 / 10
+              - generic [ref=e240]:
+                - generic [ref=e241]: 资格分
+                - generic [ref=e242]: "0"
+              - generic [ref=e243]:
+                - generic [ref=e244]: 排行榜
+                - generic [ref=e245]: 未上榜
+              - generic [ref=e246]:
+                - generic [ref=e247]: 排行被动
+                - generic [ref=e248]: 无
+      - generic [ref=e249]:
+        - generic [ref=e250] [cursor=pointer]: ◆ 战力与物资库
+        - generic [ref=e254]:
+          - generic [ref=e255]: 职业
+          - generic [ref=e265]: 通用技能
+          - generic [ref=e275]: 装备
+          - generic [ref=e284]: 背包
+      - generic [ref=e294]: ◆ 人际与过往记录

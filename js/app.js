@@ -52,10 +52,10 @@ const Toast = {
   show(msg, type = 'info', duration = 3500) {
     if (!this.container) this.init();
     const icons = {
-      success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
-      warning: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--fire)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-      error: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blood)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
-      info: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+      success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b8b5c" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+      warning: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4753b" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      error: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8b2e2e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      info: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c4a35a" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
     };
     const el = document.createElement('div');
     el.className = `toast toast-${type}`;
@@ -126,12 +126,12 @@ const Modal = {
   }
 };
 
-// ============ Starfield Background ============
-function initStarfield() {
+// ============ Ember Particle Background ============
+function initEmbers() {
   const canvas = $('#starfield-canvas');
   const ctx = canvas.getContext('2d');
-  let stars = [];
-  const STAR_COUNT = 180;
+  let particles = [];
+  const COUNT = 100;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -140,62 +140,75 @@ function initStarfield() {
   resize();
   window.addEventListener('resize', resize);
 
-  function createStars() {
-    stars = [];
-    for (let i = 0; i < STAR_COUNT; i++) {
-      stars.push({
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < COUNT; i++) {
+      particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 1.4 + 0.3,
-        twinkleSpeed: Math.random() * 0.015 + 0.005,
-        twinkleOffset: Math.random() * Math.PI * 2,
-        opacity: Math.random() * 0.6 + 0.3
+        r: Math.random() * 2.0 + 0.4,
+        speedY: -(Math.random() * 0.3 + 0.1),
+        speedX: (Math.random() - 0.5) * 0.3,
+        wobbleAmp: Math.random() * 0.5 + 0.2,
+        wobbleSpeed: Math.random() * 0.02 + 0.005,
+        opacity: Math.random() * 0.5 + 0.2,
+        hue: Math.random() < 0.7 ? 'ember' : 'gold',
+        life: Math.random(),
+        fadeRate: Math.random() * 0.003 + 0.001
       });
     }
   }
-  createStars();
-  window.addEventListener('resize', createStars);
+  createParticles();
+  window.addEventListener('resize', createParticles);
 
   let frame = 0;
   function animate() {
     frame++;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Deep radial gradient overlay
-    const grad = ctx.createRadialGradient(canvas.width * 0.5, 0, 0, canvas.width * 0.5, 0, canvas.height * 0.8);
-    grad.addColorStop(0, 'rgba(13, 26, 43, 0.15)');
-    grad.addColorStop(0.5, 'rgba(6, 10, 16, 0.3)');
-    grad.addColorStop(1, 'rgba(6, 10, 16, 0.6)');
+    // Deep warm vignette
+    const grad = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.7, 0, canvas.width * 0.5, canvas.height * 0.7, canvas.height * 0.9);
+    grad.addColorStop(0, 'rgba(30, 15, 8, 0.1)');
+    grad.addColorStop(0.5, 'rgba(8, 7, 6, 0.3)');
+    grad.addColorStop(1, 'rgba(8, 7, 6, 0.65)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    stars.forEach(s => {
-      const op = s.opacity + Math.sin(frame * s.twinkleSpeed + s.twinkleOffset) * 0.3;
-      const alpha = Math.max(0.1, Math.min(1, op));
+    particles.forEach(p => {
+      p.y += p.speedY;
+      p.x += p.speedX + Math.sin(frame * p.wobbleSpeed) * p.wobbleAmp * 0.1;
+      p.life -= p.fadeRate;
+
+      // Reset particle when it fades out or goes off screen
+      if (p.life <= 0 || p.y < -20 || p.x < -20 || p.x > canvas.width + 20) {
+        p.x = Math.random() * canvas.width;
+        p.y = canvas.height + Math.random() * 30;
+        p.life = 1;
+      }
+
+      const alpha = p.opacity * Math.max(0, p.life);
+      if (alpha <= 0.02) return;
+
+      // Core glow
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(180, 200, 240, ${alpha})`;
+      if (p.hue === 'ember') {
+        ctx.fillStyle = `rgba(212, 117, 59, ${alpha})`;
+      } else {
+        ctx.fillStyle = `rgba(196, 163, 90, ${alpha})`;
+      }
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
 
-      // Glow halo for larger stars
-      if (s.r > 1.1) {
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(88, 150, 220, ${alpha * 0.12})`;
-        ctx.fill();
+      // Outer glow halo
+      ctx.beginPath();
+      if (p.hue === 'ember') {
+        ctx.fillStyle = `rgba(200, 80, 30, ${alpha * 0.2})`;
+      } else {
+        ctx.fillStyle = `rgba(180, 140, 70, ${alpha * 0.2})`;
       }
+      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+      ctx.fill();
     });
-
-    // Subtle drifting nebula
-    const t = frame * 0.0003;
-    const nx = canvas.width * (0.3 + Math.sin(t) * 0.2);
-    const ny = canvas.height * (0.4 + Math.cos(t * 0.7) * 0.15);
-    const nebulaGrad = ctx.createRadialGradient(nx, ny, 0, nx, ny, canvas.width * 0.45);
-    nebulaGrad.addColorStop(0, 'rgba(40, 60, 100, 0.04)');
-    nebulaGrad.addColorStop(0.5, 'rgba(20, 30, 60, 0.02)');
-    nebulaGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = nebulaGrad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     requestAnimationFrame(animate);
   }
@@ -591,7 +604,7 @@ function renderSkillsHtml(skills, pathPrefix) {
       if (effKeys.length > 0) {
         h += `<div class="skill-detail">`;
         effKeys.forEach(ek => {
-          h += `<div><span style="color:var(--mystic);font-weight:600;">${ek}</span>: ${editText(eff[ek], baseP + '.效果.' + ek)}</div>`;
+          h += `<div><span style="color:var(--soul);font-weight:600;">${ek}</span>: ${editText(eff[ek], baseP + '.效果.' + ek)}</div>`;
         });
         h += `</div>`;
       }
@@ -832,7 +845,7 @@ function populateAll() {
       teHtml = `<div style="font-size:0.82rem;color:var(--text-body);line-height:1.5;">${editText(tEffs, '契约者.头部.天赋.效果')}</div>`;
     } else {
       Object.keys(tEffs || {}).forEach(k => {
-        teHtml += `<div style="font-size:0.82rem;padding:2px 0;"><span style="color:var(--mystic);font-weight:600;">${k}</span>: ${editText(tEffs[k], '契约者.头部.天赋.效果.' + k)}</div>`;
+        teHtml += `<div style="font-size:0.82rem;padding:2px 0;"><span style="color:var(--soul);font-weight:600;">${k}</span>: ${editText(tEffs[k], '契约者.头部.天赋.效果.' + k)}</div>`;
       });
     }
     setHtml('h-talent-effects', teHtml);
@@ -853,7 +866,7 @@ function populateAll() {
       tiHtml = `<div style="font-size:0.82rem;color:var(--text-body);line-height:1.5;">${editText(tiEffs, '契约者.头部.称号.效果')}</div>`;
     } else {
       Object.keys(tiEffs || {}).forEach(k => {
-        tiHtml += `<div style="font-size:0.82rem;padding:2px 0;"><span style="color:var(--mystic);font-weight:600;">${k}</span>: ${editText(tiEffs[k], '契约者.头部.称号.效果.' + k)}</div>`;
+        tiHtml += `<div style="font-size:0.82rem;padding:2px 0;"><span style="color:var(--soul);font-weight:600;">${k}</span>: ${editText(tiEffs[k], '契约者.头部.称号.效果.' + k)}</div>`;
       });
     }
     setHtml('h-title-effects', tiHtml);
@@ -949,7 +962,7 @@ function populateAll() {
     const jtKeys = Object.keys(jobTraits);
     if (jtKeys.length === 0) jtHtml = '<div class="empty-state">暂无职业特性</div>';
     else jtKeys.forEach(k => {
-      jtHtml += `<div class="skill-row"><span style="color:var(--mystic);font-weight:700;">${k}</span><br><span style="font-size:0.82rem;color:var(--text-body);">${editText(getNested(jobTraits[k], '效果', ''), '契约者.职业.职业特性.' + k + '.效果')}</span></div>`;
+      jtHtml += `<div class="skill-row"><span style="color:var(--soul);font-weight:700;">${k}</span><br><span style="font-size:0.82rem;color:var(--text-body);">${editText(getNested(jobTraits[k], '效果', ''), '契约者.职业.职业特性.' + k + '.效果')}</span></div>`;
     });
     setHtml('job-traits', jtHtml);
 
@@ -958,7 +971,7 @@ function populateAll() {
     const lsKeys = Object.keys(legacySkills);
     if (lsKeys.length === 0) lsHtml = '<div class="empty-state">暂无传承技能</div>';
     else lsKeys.forEach(k => {
-      lsHtml += `<div class="skill-row"><span style="color:var(--fire-bright);font-weight:700;">${k}</span> <span style="color:var(--text-secondary);font-size:0.75rem;">Lv.${editSpan(getNested(legacySkills[k], '等级', '-'), '契约者.职业.传承技能.' + k + '.等级')}</span><br><span style="font-size:0.82rem;color:var(--text-body);">${editText(getNested(legacySkills[k], '效果', ''), '契约者.职业.传承技能.' + k + '.效果')}</span></div>`;
+      lsHtml += `<div class="skill-row"><span style="color:var(--ember-bright);font-weight:700;">${k}</span> <span style="color:var(--text-secondary);font-size:0.75rem;">Lv.${editSpan(getNested(legacySkills[k], '等级', '-'), '契约者.职业.传承技能.' + k + '.等级')}</span><br><span style="font-size:0.82rem;color:var(--text-body);">${editText(getNested(legacySkills[k], '效果', ''), '契约者.职业.传承技能.' + k + '.效果')}</span></div>`;
     });
     setHtml('job-legacy', lsHtml);
   } else {
@@ -1015,7 +1028,7 @@ function populateAll() {
       bagHtml += `<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">`;
       bagHtml += `<span style="color:var(--text-primary);font-size:0.88rem;font-weight:700;">${k}</span>`;
       bagHtml += `<div style="display:flex;gap:6px;align-items:center;">`;
-      bagHtml += `<span style="color:var(--green);">×${editSpan(count, bp + '.数量')}</span>`;
+      bagHtml += `<span style="color:var(--sage);">×${editSpan(count, bp + '.数量')}</span>`;
       if (isEquip) {
         bagHtml += `<select class="select-field equip-target-select" style="width:auto;padding:3px 24px 3px 6px;font-size:0.72rem;">${targetOptionsHtml}</select>`;
         bagHtml += `<select class="select-field equip-slot-select" style="width:auto;padding:3px 24px 3px 6px;font-size:0.72rem;">`;
@@ -1035,7 +1048,7 @@ function populateAll() {
 
         bagHtml += `<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;">`;
         bagHtml += `<span class="tag ${tagClass}">${editText(quality, bp + '.品质')}${enhance ? ' +' + editSpan(enhance, bp + '.强化等级') : ''}</span>`;
-        if (type && type !== '无') bagHtml += `<span style="color:var(--accent);font-size:0.75rem;">${editText(type, bp + '.类型')}</span>`;
+        if (type && type !== '无') bagHtml += `<span style="color:var(--gold-bright);font-size:0.75rem;">${editText(type, bp + '.类型')}</span>`;
         if (dice && dice !== '无' && dice !== '') bagHtml += `<span style="color:var(--text-body);font-size:0.75rem;">${editText(dice, bp + '.伤害骰')}${mult ? '(×' + mult + ')' : ''}</span>`;
         bagHtml += `</div>`;
       }
@@ -1072,11 +1085,11 @@ function populateAll() {
   else relKeys.forEach(k => {
     const rel = relations[k] || {};
     const fav = getNested(rel, '好感度', 0);
-    let favColor = 'var(--green)';
+    let favColor = 'var(--sage)';
     if (fav < -30) favColor = 'var(--blood)';
-    else if (fav < 0) favColor = 'var(--fire)';
+    else if (fav < 0) favColor = 'var(--ember)';
     else if (fav < 30) favColor = 'var(--text-secondary)';
-    else if (fav < 60) favColor = 'var(--accent)';
+    else if (fav < 60) favColor = 'var(--gold-bright)';
     relHtml += `<div class="skill-row"><span style="color:var(--text-primary);font-size:0.88rem;">${k}</span> <span style="color:${favColor};">◆ ${editSpan(fav, '契约者.人际关系.' + k + '.好感度')}</span>`;
     if (getNested(rel, '关系', '')) relHtml += `<br><span style="font-size:0.8rem;color:var(--text-dim);">${editText(getNested(rel, '关系', ''), '契约者.人际关系.' + k + '.关系')}</span>`;
     relHtml += `</div>`;
@@ -1115,7 +1128,7 @@ function populateAll() {
   else ihKeys.forEach(k => {
     const c = inherentChars[k] || {};
     const st = getNested(c, '状态', '存活');
-    ihHtml += `<div class="skill-row"><span class="tag ${st === '死亡' ? 'tag-red' : 'tag-green'}">${st}</span> <span style="color:var(--fire-bright);font-size:0.8rem;">${getNested(c, '阶位', '')}</span> <span style="color:var(--text-primary);font-size:0.88rem;font-weight:700;">${k}</span><br><span style="color:var(--text-secondary);font-size:0.8rem;">Lv.${getNested(c, '等级', 1)} | ${getNested(c, '类型', '')}</span></div>`;
+    ihHtml += `<div class="skill-row"><span class="tag ${st === '死亡' ? 'tag-red' : 'tag-green'}">${st}</span> <span style="color:var(--ember-bright);font-size:0.8rem;">${getNested(c, '阶位', '')}</span> <span style="color:var(--text-primary);font-size:0.88rem;font-weight:700;">${k}</span><br><span style="color:var(--text-secondary);font-size:0.8rem;">Lv.${getNested(c, '等级', 1)} | ${getNested(c, '类型', '')}</span></div>`;
   });
   setHtml('inherent-chars-list', ihHtml);
 
@@ -1164,7 +1177,6 @@ function populateAll() {
   setHtml('quest-achievements', renderQuestSection(d('契约者.当前副本任务.副本成就', {}), '契约者.当前副本任务.副本成就', '暂无成就'));
 
   // === Enemies ===
-  const enemies = d('契约者.当前敌人', {});
   const enKeys = Object.keys(enemies);
   let enHtml = '';
   const enemyCountEl = $('#enemy-count');
@@ -1468,7 +1480,7 @@ function initEvents() {
       const reply = responses[Math.floor(Math.random() * responses.length)];
       const aiMsg = document.createElement('div');
       aiMsg.className = 'chat-msg assistant';
-      aiMsg.innerHTML = `<div class="chat-avatar" style="background:var(--fire);color:#fff;">廊</div><div class="chat-bubble">${reply}</div>`;
+      aiMsg.innerHTML = `<div class="chat-avatar" style="background:var(--ember);color:#fff;">廊</div><div class="chat-bubble">${reply}</div>`;
       chatMessages.appendChild(aiMsg);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }, 600 + Math.random() * 800);
@@ -1501,7 +1513,7 @@ function escapeHtml(str) {
 
 // ============ Init ============
 function init() {
-  initStarfield();
+  initEmbers();
   Toast.init();
   Modal.init();
   recalcStats('契约者');
@@ -1513,11 +1525,11 @@ function init() {
     Toast.show('欢迎回到无限回廊，契约者。', 'info', 4000);
   }, 500);
 
-  console.log('%c◆ 无限回廊 · Infinite Corridor %cv3.0',
-    'color:#58a6ff;font-size:1.2em;font-weight:bold;',
-    'color:#8b949e;');
-  console.log('%c回廊意志已就绪。愿你在无尽的轮回中找到属于自己的道路。',
-    'color:#7a8490;font-style:italic;');
+  console.log('%c◆ 无限回廊 · Infinite Corridor %cv4.0',
+    'color:#c4a35a;font-size:1.2em;font-weight:bold;',
+    'color:#7a7162;');
+  console.log('%c余烬未熄，契约永存。愿你在无尽的轮回中找到属于自己的道路。',
+    'color:#b5ac9a;font-style:italic;');
 }
 
 document.addEventListener('DOMContentLoaded', init);

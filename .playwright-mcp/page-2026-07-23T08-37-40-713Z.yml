@@ -1,0 +1,188 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e4]:
+    - generic [ref=f2e8]: 欢迎回到无限回廊，契约者。
+    - button "×" [ref=f2e9] [cursor=pointer]
+  - generic [ref=f2e10]:
+    - complementary [ref=f2e11]:
+      - generic [ref=f2e12]: 无限回廊
+      - navigation [ref=f2e18]:
+        - button "状态档案" [ref=f2e19] [cursor=pointer]
+        - button "副本情报" [ref=f2e24] [cursor=pointer]
+        - button "敌情警戒 0" [ref=f2e29] [cursor=pointer]:
+          - generic [ref=f2e33]: 敌情警戒
+          - generic [ref=f2e34]: "0"
+        - button "回廊地图" [ref=f2e35] [cursor=pointer]
+        - button "职业树" [ref=f2e42] [cursor=pointer]
+        - button "回廊通讯" [ref=f2e52] [cursor=pointer]
+      - button "折叠全部 折叠全部面板" [ref=f2e59] [cursor=pointer]:
+        - generic [ref=f2e62]: 折叠全部
+        - text: 折叠全部面板
+    - main [ref=f2e63]:
+      - generic [ref=f2e64]:
+        - generic [ref=f2e65]:
+          - generic [ref=f2e66] [cursor=pointer]: ◆ 当前环境坐标
+          - generic [ref=f2e71]:
+            - generic [ref=f2e72]:
+              - generic [ref=f2e73]: 当前世界
+              - generic [ref=f2e74]: 现实
+            - generic [ref=f2e75]:
+              - generic [ref=f2e76]: 现实日期
+              - generic [ref=f2e77]: 2025年5月10日
+            - generic [ref=f2e78]:
+              - generic [ref=f2e79]: 现实时间
+              - generic [ref=f2e80]: 凌晨00:00
+            - generic [ref=f2e81]:
+              - generic [ref=f2e82]: 副本日期
+              - generic [ref=f2e83]: 不在副本中
+            - generic [ref=f2e84]:
+              - generic [ref=f2e85]: 客观时间
+              - generic [ref=f2e86]: 不在副本中
+            - generic [ref=f2e87]:
+              - generic [ref=f2e88]: 当前地点
+              - generic [ref=f2e89]: 回廊广场 · 一阶区
+            - generic [ref=f2e90]:
+              - generic [ref=f2e91]: 阶段进度
+              - generic [ref=f2e92]: 0%
+        - generic [ref=f2e93]:
+          - generic [ref=f2e94] [cursor=pointer]: ◆ 核心状态总览
+          - generic [ref=f2e98]:
+            - generic [ref=f2e99]:
+              - generic [ref=f2e100] [cursor=pointer]: 契约者档案
+              - generic [ref=f2e109]:
+                - generic [ref=f2e110]:
+                  - generic [ref=f2e111]: 姓名
+                  - generic "点击编辑文本" [ref=f2e113]: 未命名契约者
+                - generic [ref=f2e114]:
+                  - generic [ref=f2e115]: 等级
+                  - generic [ref=f2e116]: Lv.3
+                - generic [ref=f2e117]:
+                  - generic [ref=f2e118]: EXP
+                  - generic [ref=f2e119]: 35 / 150
+                - generic [ref=f2e121]:
+                  - generic [ref=f2e122]: 阶位
+                  - generic "点击编辑文本" [ref=f2e124]: 一阶
+                - generic [ref=f2e125]:
+                  - generic [ref=f2e126]: 军衔
+                  - generic [ref=f2e127]: 上士
+                - generic [ref=f2e128]:
+                  - generic [ref=f2e129]: RP
+                  - generic [ref=f2e130]: 12 / 15
+                - generic [ref=f2e131]:
+                  - generic [ref=f2e132]: CR
+                  - generic [ref=f2e133]: "4.2"
+                - generic [ref=f2e134]:
+                  - generic [ref=f2e135]: 回廊态度
+                  - generic [ref=f2e136]: 观察
+                - generic [ref=f2e137]:
+                  - generic [ref=f2e138]: 天赋
+                  - generic [ref=f2e139]:
+                    - generic [ref=f2e140]:
+                      - generic [ref=f2e141]: 名称
+                      - generic "点击编辑文本" [ref=f2e143]: 钢铁意志
+                    - generic [ref=f2e144]:
+                      - generic [ref=f2e145]: 品质
+                      - generic "点击编辑文本" [ref=f2e147]: 蓝色
+                    - generic [ref=f2e148]:
+                      - generic [ref=f2e149]: 属性加成
+                      - generic "点击编辑文本" [ref=f2e151]: 体力 +3
+                  - generic [ref=f2e152]:
+                    - generic [ref=f2e153]:
+                      - text: "坚韧:"
+                      - generic "点击编辑文本" [ref=f2e154]: 受到致命伤害时，有15%概率保留1点HP
+                    - generic [ref=f2e155]:
+                      - text: "意志:"
+                      - generic "点击编辑文本" [ref=f2e156]: 精神控制类效果抵抗+25%
+                - generic [ref=f2e157]:
+                  - generic [ref=f2e158]: 称号
+                  - generic [ref=f2e159]:
+                    - generic [ref=f2e160]: 名称
+                    - generic "点击编辑文本" [ref=f2e162]: 初探深渊者
+                  - generic [ref=f2e164]:
+                    - text: "威压:"
+                    - generic "点击编辑文本" [ref=f2e165]: 对一阶以下生物造成5%额外伤害
+            - generic [ref=f2e166]:
+              - generic [ref=f2e167] [cursor=pointer]: 属性面板
+              - generic [ref=f2e175]:
+                - generic [ref=f2e176]:
+                  - generic [ref=f2e177]: STR 力量
+                  - generic [ref=f2e178]: 12 / 软上限25
+                - generic [ref=f2e179]: 基础 8 | 手动 0 | 总加成 +4
+                - generic [ref=f2e181]:
+                  - generic [ref=f2e182]: AGI 敏捷
+                  - generic [ref=f2e183]: 6 / 软上限25
+                - generic [ref=f2e184]: 基础 6 | 手动 0 | 总加成 +0
+                - generic [ref=f2e186]:
+                  - generic [ref=f2e187]: CON 体力
+                  - generic [ref=f2e188]: 21 / 软上限25
+                - generic [ref=f2e189]: 基础 12 | 手动 0 | 总加成 +9
+                - generic [ref=f2e191]:
+                  - generic [ref=f2e192]: PER 感知
+                  - generic [ref=f2e193]: 9 / 软上限25
+                - generic [ref=f2e194]: 基础 9 | 手动 0 | 总加成 +0
+                - generic [ref=f2e196]:
+                  - generic [ref=f2e197]: 未分配点数
+                  - generic [ref=f2e198]: "2"
+                - generic [ref=f2e199]:
+                  - generic [ref=f2e200]: 衍生属性
+                  - generic [ref=f2e201]:
+                    - generic [ref=f2e202]: HP
+                    - generic [ref=f2e203]: 218 / 315
+                  - generic [ref=f2e206]:
+                    - generic [ref=f2e207]: MP
+                    - generic [ref=f2e208]: 90 / 90
+                  - generic [ref=f2e211]:
+                    - generic [ref=f2e212]: 耐力
+                    - generic [ref=f2e213]: 155 / 210
+                  - generic [ref=f2e216]:
+                    - generic [ref=f2e217]:
+                      - generic [ref=f2e218]: 防御
+                      - generic [ref=f2e219]: "31"
+                    - generic [ref=f2e220]:
+                      - generic [ref=f2e221]: 闪避
+                      - generic [ref=f2e222]: "16"
+                    - generic [ref=f2e223]:
+                      - generic [ref=f2e224]: 移距
+                      - generic [ref=f2e225]: 6m
+                    - generic [ref=f2e226]:
+                      - generic [ref=f2e227]: 负重
+                      - generic [ref=f2e228]: 18 / 60kg
+            - generic [ref=f2e229]:
+              - generic [ref=f2e230] [cursor=pointer]: 状态 & 经济
+              - generic [ref=f2e239]:
+                - generic [ref=f2e240]:
+                  - generic [ref=f2e241]: 生命状态
+                  - generic [ref=f2e242]: 受伤
+                - generic [ref=f2e243]:
+                  - generic [ref=f2e244]: 特殊状态
+                  - generic [ref=f2e246]:
+                    - generic [ref=f2e247]: 疲惫
+                    - generic "点击编辑文本" [ref=f2e249]: 连续作战8小时，全属性判定-1（持续至下次休息）
+                - generic [ref=f2e250]:
+                  - generic [ref=f2e251]: UP
+                  - generic [ref=f2e252]: "245"
+            - generic [ref=f2e253]:
+              - generic [ref=f2e254] [cursor=pointer]: 赛季 & 排行
+              - generic [ref=f2e262]:
+                - generic [ref=f2e263]:
+                  - generic [ref=f2e264]: 当前赛季
+                  - generic [ref=f2e265]: "21"
+                - generic [ref=f2e266]:
+                  - generic [ref=f2e267]: 副本周期
+                  - generic [ref=f2e268]: 3 / 10
+                - generic [ref=f2e270]:
+                  - generic [ref=f2e271]: 资格分
+                  - generic [ref=f2e272]: "45"
+                - generic [ref=f2e273]:
+                  - generic [ref=f2e274]: 排行榜
+                  - generic [ref=f2e275]: 未上榜
+                - generic [ref=f2e276]:
+                  - generic [ref=f2e277]: 排行被动
+                  - generic [ref=f2e278]: 无
+        - generic [ref=f2e279]:
+          - generic [ref=f2e280] [cursor=pointer]: ◆ 战力与物资库
+          - generic [ref=f2e284]:
+            - generic [ref=f2e285]: 职业
+            - generic [ref=f2e295]: 通用技能
+            - generic [ref=f2e305]: 装备
+            - generic [ref=f2e314]: 背包
+        - generic [ref=f2e324]: ◆ 人际与过往记录

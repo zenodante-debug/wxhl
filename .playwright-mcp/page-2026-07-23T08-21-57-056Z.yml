@@ -1,0 +1,96 @@
+- generic [ref=f1e4]:
+  - complementary [ref=f1e5]:
+    - generic [ref=f1e6]: 无限回廊
+    - navigation [ref=f1e12]:
+      - button "状态档案" [ref=f1e13] [cursor=pointer]
+      - button "副本情报" [ref=f1e18] [cursor=pointer]
+      - button "敌情警戒 0" [ref=f1e23] [cursor=pointer]:
+        - generic [ref=f1e27]: 敌情警戒
+        - generic [ref=f1e28]: "0"
+      - button "回廊地图" [active] [ref=f1e29] [cursor=pointer]
+      - button "职业树" [ref=f1e36] [cursor=pointer]
+      - button "回廊通讯" [ref=f1e46] [cursor=pointer]
+    - button "折叠全部 折叠全部面板" [ref=f1e53] [cursor=pointer]:
+      - generic [ref=f1e56]: 折叠全部
+      - text: 折叠全部面板
+  - main [ref=f1e57]:
+    - generic [ref=f1e326]:
+      - generic [ref=f1e327] [cursor=pointer]: ◆ 全区地图导航
+      - generic [ref=f1e331]:
+        - generic [ref=f1e332]:
+          - generic [ref=f1e333] [cursor=pointer]: 回廊广场枢纽
+          - generic [ref=f1e342]:
+            - generic [ref=f1e343]:
+              - generic [ref=f1e344]:
+                - generic [ref=f1e345]: 回廊广场 (主城中心)
+                - generic [ref=f1e346]: 已解锁
+              - generic [ref=f1e347]: 按阶位划分的安全区（一阶至五阶物理隔离）。绝对禁止武力冲突。休息周期结束前1小时在此集合等待副本传送。可进行物品面交摆摊。
+            - generic [ref=f1e348]:
+              - generic [ref=f1e349]:
+                - generic [ref=f1e350]: 契约者排行榜石碑
+                - generic [ref=f1e351]: 已解锁
+              - generic [ref=f1e352]: 位于广场中央，展示人、黄、玄、地、天五榜。仅展示淘汰赛前十名的称号、等级与小队。
+            - generic [ref=f1e353]:
+              - generic [ref=f1e354]:
+                - generic [ref=f1e355]: 回廊悬赏板
+                - generic [ref=f1e356]: 权限不足 (上士解锁)
+              - generic [ref=f1e357]: 接取回廊发布的定向击杀/采集/侦查悬赏任务，在下一个常规副本中自动激活，奖励UP和少量EXP。
+        - generic [ref=f1e358]:
+          - generic [ref=f1e359] [cursor=pointer]: 商业与交易区
+          - generic [ref=f1e369]:
+            - generic [ref=f1e370]:
+              - generic [ref=f1e371]:
+                - generic [ref=f1e372]: 基础商店
+                - generic [ref=f1e373]: 已解锁
+              - generic [ref=f1e374]: 出售一阶白/蓝装备和全部基础消耗品。
+            - generic [ref=f1e375]:
+              - generic [ref=f1e376]:
+                - generic [ref=f1e377]: 高级市场
+                - generic [ref=f1e378]: 权限不足 (少尉解锁)
+              - generic [ref=f1e379]: 出售蓝/绿/金装备、高级消耗品、各阶技能卷轴及职业书。支持回收非绑定装备（原价40%~60%）。
+            - generic [ref=f1e380]:
+              - generic [ref=f1e381]:
+                - generic [ref=f1e382]: 军衔商店
+                - generic [ref=f1e383]: 已解锁
+              - generic [ref=f1e384]: 根据军衔等级开放对应货架，消耗稀有货币(RP)兑换高级战略物资与特权。
+            - generic [ref=f1e385]:
+              - generic [ref=f1e386]:
+                - generic [ref=f1e387]: 回廊密库
+                - generic [ref=f1e388]: 权限不足 (准将解锁)
+              - generic [ref=f1e389]: 出售极稀有的紫传职业书、天赋试炼入场券、三转书及单属性突破药剂。
+        - generic [ref=f1e390]:
+          - generic [ref=f1e391] [cursor=pointer]: 强化与职能区
+          - generic [ref=f1e399]:
+            - generic [ref=f1e400]:
+              - generic [ref=f1e401]:
+                - generic [ref=f1e402]: 医疗中心
+                - generic [ref=f1e403]: 已解锁
+              - generic [ref=f1e404]: 全HP治愈 (30UP) / 解除负面 (20UP) / 断肢及失明修复 (100UP)。
+            - generic [ref=f1e405]:
+              - generic [ref=f1e406]:
+                - generic [ref=f1e407]: 强化室
+                - generic [ref=f1e408]: 已解锁
+              - generic [ref=f1e409]: 进行装备强化。基础技能升级（Lv.1→5）。上士军衔额外解锁高级技能训练。
+            - generic [ref=f1e410]:
+              - generic [ref=f1e411]:
+                - generic [ref=f1e412]: 职业馆
+                - generic [ref=f1e413]: 已解锁
+              - generic [ref=f1e414]: 出售白色/蓝色基础职业书与一转职业书。
+            - generic [ref=f1e415]:
+              - generic [ref=f1e416]:
+                - generic [ref=f1e417]: 回廊铸造室
+                - generic [ref=f1e418]: 权限不足 (少校解锁)
+              - generic [ref=f1e419]: 可对蓝色及以上品质装备进行词条重铸，每件装备每赛季限3次。
+        - generic [ref=f1e420]:
+          - generic [ref=f1e421] [cursor=pointer]: 战略控制设施
+          - generic [ref=f1e430]:
+            - generic [ref=f1e431]:
+              - generic [ref=f1e432]:
+                - generic [ref=f1e433]: 个人储藏室
+                - generic [ref=f1e434]: 已解锁
+              - generic [ref=f1e435]: 存放当前不需携带入本的装备与物资的独立安全空间。
+            - generic [ref=f1e436]:
+              - generic [ref=f1e437]:
+                - generic [ref=f1e438]: 世界调度室
+                - generic [ref=f1e439]: 权限不足 (上校解锁)
+              - generic [ref=f1e440]: 花费100UP从三个随机副本中择一进入，或花费巨额UP指定回归曾经历的副本。并提供战前简报情报。
