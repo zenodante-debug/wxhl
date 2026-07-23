@@ -8,574 +8,194 @@
 </head>
 <body>
 
-<!-- Starfield Background -->
-<div id="starfield"><canvas id="starfield-canvas"></canvas></div>
-
-<!-- Toast Notification Container -->
-<div id="toast-container"></div>
-
-<!-- Modal Container -->
-<div id="modal-root"></div>
-
-<!-- App Shell -->
-<div id="app-shell">
-
-  <!-- ============ SIDEBAR ============ -->
-  <aside id="sidebar">
-    <div class="sidebar-logo" data-tooltip="无限回廊">
-      <svg viewBox="0 0 40 40">
-        <circle cx="20" cy="20" r="18" class="logo-ring"/>
-        <circle cx="20" cy="20" r="7" class="logo-inner"/>
-        <circle cx="20" cy="20" r="2.5" class="logo-center"/>
-        <line x1="20" y1="2" x2="20" y2="13" stroke="#c4a35a" stroke-width="1" opacity="0.5"/>
-        <line x1="20" y1="27" x2="20" y2="38" stroke="#c4a35a" stroke-width="1" opacity="0.5"/>
-        <line x1="2" y1="20" x2="13" y2="20" stroke="#c4a35a" stroke-width="1" opacity="0.5"/>
-        <line x1="27" y1="20" x2="38" y2="20" stroke="#c4a35a" stroke-width="1" opacity="0.5"/>
-      </svg>
-    </div>
-
-    <div class="sidebar-divider"></div>
-
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-tab="tab-status">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg></span>
-        <span class="nav-label">状态档案</span>
-      </button>
-      <button class="nav-item" data-tab="tab-dungeon">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2z"/><line x1="12" y1="22" x2="12" y2="13"/></svg></span>
-        <span class="nav-label">副本情报</span>
-      </button>
-      <button class="nav-item" data-tab="tab-enemy">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg></span>
-        <span class="nav-label">敌情警戒</span>
-        <span class="nav-badge" id="enemy-nav-badge">0</span>
-      </button>
-      <button class="nav-item" data-tab="tab-map">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/><circle cx="6.5" cy="14" r="1.5"/><circle cx="15" cy="6.5" r="1.5"/></svg></span>
-        <span class="nav-label">回廊地图</span>
-      </button>
-      <button class="nav-item" data-tab="tab-jobtree">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><line x1="12" y1="6" x2="12" y2="11"/><circle cx="12" cy="13" r="2"/><circle cx="7" cy="20" r="2"/><circle cx="17" cy="20" r="2"/><line x1="12" y1="15" x2="7" y2="18"/><line x1="12" y1="15" x2="17" y2="18"/></svg></span>
-        <span class="nav-label">职业树</span>
-      </button>
-      <button class="nav-item" data-tab="tab-chat">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-        <span class="nav-label">回廊通讯</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-divider"></div>
-
-    <div class="sidebar-footer">
-      <button class="nav-item" id="btn-collapse-all" data-tooltip="折叠全部面板">
-        <span class="nav-icon"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></span>
-        <span class="nav-label">折叠全部</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- ============ MAIN CONTENT AREA ============ -->
-  <main id="main-area">
-
-    <!-- ========== TAB: 状态档案 ========== -->
-    <section class="tab-panel active" id="tab-status">
-
-      <!-- 全局坐标 -->
-      <div class="group-section">
-        <div class="group-header" data-group="env">
-          <span class="group-title" style="color:var(--gold-bright);">◆ 当前环境坐标</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-env-body">
-          <div class="stat-grid-2">
-            <div class="stat-row"><span class="stat-label">当前世界</span><span class="stat-value accent" id="env-world">现实</span></div>
-            <div class="stat-row"><span class="stat-label">现实日期</span><span class="stat-value dim" id="env-real-date">---</span></div>
-            <div class="stat-row"><span class="stat-label">现实时间</span><span class="stat-value dim" id="env-real-time">---</span></div>
-            <div class="stat-row"><span class="stat-label">副本日期</span><span class="stat-value dim" id="env-dungeon-date">不在副本中</span></div>
-            <div class="stat-row"><span class="stat-label">客观时间</span><span class="stat-value dim" id="env-obj-time">不在副本中</span></div>
-            <div class="stat-row"><span class="stat-label">当前地点</span><span class="stat-value dim" id="env-loc">未知</span></div>
-            <div class="stat-row"><span class="stat-label">阶段进度</span><span class="stat-value dim" id="env-prog">0%</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 核心状态总览 -->
-      <div class="group-section">
-        <div class="group-header" data-group="core">
-          <span class="group-title" style="color:var(--gold-bright);">◆ 核心状态总览</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-core-body">
-
-          <!-- 契约者基本信息 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="char-basic">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-dim)" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg></span>
-                <span class="panel-label">契约者档案</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-char-basic">
-              <div class="stat-row"><span class="stat-label">姓名</span><span class="stat-value accent" id="h-name">---</span></div>
-              <div class="stat-row"><span class="stat-label">等级</span><span class="stat-value" id="h-lv">Lv.1</span></div>
-              <div class="stat-row"><span class="stat-label">EXP</span><span class="stat-value dim" id="h-exp">0 / 50</span></div>
-              <div class="progress-bar"><div class="progress-fill progress-exp" id="bar-exp" style="width:0%"></div></div>
-              <div class="stat-row"><span class="stat-label">阶位</span><span class="stat-value accent" id="h-rank">一阶</span></div>
-              <div class="stat-row"><span class="stat-label">军衔</span><span class="stat-value dim" id="h-army">列兵</span></div>
-              <div class="stat-row"><span class="stat-label">RP</span><span class="stat-value dim" id="h-rp">0 / 5</span></div>
-              <div class="stat-row"><span class="stat-label">CR</span><span class="stat-value" id="h-cr">3.0</span></div>
-              <div class="stat-row"><span class="stat-label">回廊态度</span><span class="stat-value dim" id="h-att">观察</span></div>
-              <div class="sub-section" style="margin-top:8px;">
-                <div class="sub-title">天赋</div>
-                <div id="h-talent-section">
-                  <div class="stat-row"><span class="stat-label">名称</span><span class="stat-value none" id="h-talent-name">无</span></div>
-                  <div class="stat-row"><span class="stat-label">品质</span><span class="stat-value dim" id="h-talent-quality"></span></div>
-                  <div class="stat-row"><span class="stat-label">属性加成</span><span class="stat-value dim" id="h-talent-bonus"></span></div>
-                </div>
-                <div id="h-talent-effects" style="margin-top:4px;"></div>
-              </div>
-              <div class="sub-section" style="margin-top:6px;">
-                <div class="sub-title">称号</div>
-                <div class="stat-row"><span class="stat-label">名称</span><span class="stat-value none" id="h-title-name">无</span></div>
-                <div id="h-title-effects" style="margin-top:4px;"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 属性面板 -->
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="char-attr">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-                <span class="panel-label">属性面板</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-char-attr">
-              <div class="stat-row"><span class="stat-label">STR 力量</span><span class="stat-value" id="attr-str">5</span></div>
-              <div class="stat-row" style="font-size:0.73rem;color:var(--text-dim);"><span></span><span id="attr-str-detail"></span></div>
-              <div class="stat-row"><span class="stat-label">AGI 敏捷</span><span class="stat-value" id="attr-agi">5</span></div>
-              <div class="stat-row" style="font-size:0.73rem;color:var(--text-dim);"><span></span><span id="attr-agi-detail"></span></div>
-              <div class="stat-row"><span class="stat-label">CON 体力</span><span class="stat-value" id="attr-con">5</span></div>
-              <div class="stat-row" style="font-size:0.73rem;color:var(--text-dim);"><span></span><span id="attr-con-detail"></span></div>
-              <div class="stat-row"><span class="stat-label">PER 感知</span><span class="stat-value" id="attr-per">5</span></div>
-              <div class="stat-row" style="font-size:0.73rem;color:var(--text-dim);"><span></span><span id="attr-per-detail"></span></div>
-              <div class="stat-row"><span class="stat-label">未分配点数</span><span class="stat-value warn" id="attr-free">0</span></div>
-              <div class="sub-section" style="margin-top:10px;">
-                <div class="sub-title">衍生属性</div>
-                <div class="stat-row"><span class="stat-label">HP</span><span class="stat-value" id="der-hp">0 / 0</span></div>
-                <div class="progress-bar"><div class="progress-fill progress-hp" id="bar-hp" style="width:100%"></div></div>
-                <div class="stat-row"><span class="stat-label">MP</span><span class="stat-value accent" id="der-mp">0 / 0</span></div>
-                <div class="progress-bar"><div class="progress-fill progress-mp" id="bar-mp" style="width:100%"></div></div>
-                <div class="stat-row"><span class="stat-label">耐力</span><span class="stat-value warn" id="der-sp">0 / 0</span></div>
-                <div class="progress-bar"><div class="progress-fill progress-sp" id="bar-sp" style="width:100%"></div></div>
-                <div class="stat-grid-2" style="margin-top:6px;">
-                  <div class="stat-row"><span class="stat-label">防御</span><span class="stat-value dim" id="der-def">0</span></div>
-                  <div class="stat-row"><span class="stat-label">闪避</span><span class="stat-value dim" id="der-dodge">0</span></div>
-                  <div class="stat-row"><span class="stat-label">移距</span><span class="stat-value dim" id="der-move">0m</span></div>
-                  <div class="stat-row"><span class="stat-label">负重</span><span class="stat-value dim" id="der-load">0 / 0kg</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 状态 & 经济 -->
-          <div class="panel accent-blood">
-            <div class="panel-header" data-panel="char-state">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blood)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-                <span class="panel-label">状态 & 经济</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-char-state">
-              <div class="stat-row"><span class="stat-label">生命状态</span><span id="state-life" class="tag tag-green">健康</span></div>
-              <div class="sub-section"><div class="sub-title">特殊状态</div><div id="state-special"><span class="empty-state">无异常状态</span></div></div>
-              <div class="stat-row" style="margin-top:8px;"><span class="stat-label">UP</span><span class="stat-value" id="eco-up">0</span></div>
-            </div>
-          </div>
-
-          <!-- 赛季 & 排行 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="char-season">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-                <span class="panel-label">赛季 & 排行</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-char-season">
-              <div class="stat-row"><span class="stat-label">当前赛季</span><span class="stat-value gold" id="season-num">21</span></div>
-              <div class="stat-row"><span class="stat-label">副本周期</span><span class="stat-value dim" id="season-cycle">0 / 10</span></div>
-              <div class="progress-bar"><div class="progress-fill progress-cycle" id="bar-cycle" style="width:0%"></div></div>
-              <div class="stat-row"><span class="stat-label">资格分</span><span class="stat-value" id="qual-points">0</span></div>
-              <div class="stat-row"><span class="stat-label">排行榜</span><span class="stat-value none" id="rank-pos">未上榜</span></div>
-              <div class="stat-row"><span class="stat-label">排行被动</span><span class="stat-value none" id="rank-passive">无</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 战力与物资库 -->
-      <div class="group-section">
-        <div class="group-header accent-ember" data-group="combat">
-          <span class="group-title" style="color:var(--ember-bright);">◆ 战力与物资库</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-combat-body">
-
-          <!-- 职业面板 -->
-          <div class="panel accent-soul">
-            <div class="panel-header" data-panel="char-job">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--soul-dim)" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.48-8.48L5 10.5V19h8.5l6.74-6.76z"/><line x1="16" y1="8" x2="2" y2="22"/></svg></span>
-                <span class="panel-label">职业</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-job">
-              <div class="stat-row"><span class="stat-label">名称</span><span class="stat-value none" id="job-name">无</span></div>
-              <div class="stat-row"><span class="stat-label">稀有度 / 阶段</span><span class="stat-value dim"><span id="job-quality"></span> <span id="job-stage"></span></span></div>
-              <div class="stat-row"><span class="stat-label">职业等级</span><span class="stat-value" id="job-lv">Lv.0</span></div>
-              <div class="stat-row"><span class="stat-label">PEXP</span><span class="stat-value dim" id="job-pexp">0 / 0</span></div>
-              <div class="stat-row"><span class="stat-label">主属性加成</span><span class="stat-value accent" id="job-main-bonus"></span></div>
-              <div class="stat-row"><span class="stat-label">副属性加成</span><span class="stat-value dim" id="job-sub-bonus"></span></div>
-              <div class="sub-section"><div class="sub-title">职业特性</div><div id="job-traits"></div></div>
-              <div class="sub-section"><div class="sub-title">职业技能</div><div id="job-skills"></div></div>
-              <div class="sub-section"><div class="sub-title">传承技能</div><div id="job-legacy"></div></div>
-            </div>
-          </div>
-
-          <!-- 通用技能面板 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="char-genskill">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-dim)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-                <span class="panel-label">通用技能</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-genskill">
-              <div id="gen-skills"></div>
-            </div>
-          </div>
-
-          <!-- 装备面板 -->
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="char-equip">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 18v4"/><path d="M8 22h8"/></svg></span>
-                <span class="panel-label">装备</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-equip">
-              <div id="equip-list"></div>
-            </div>
-          </div>
-
-          <!-- 背包面板 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="char-bag">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="2"><rect x="3" y="6" width="18" height="15" rx="2"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span>
-                <span class="panel-label">背包</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-bag">
-              <div id="bag-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 人际与过往记录 -->
-      <div class="group-section">
-        <div class="group-header accent-soul" data-group="records">
-          <span class="group-title" style="color:var(--soul);">◆ 人际与过往记录</span>
-          <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body collapsed" id="group-records-body">
-
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="char-dungeon-log">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span>
-                <span class="panel-label">副本经历</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-dungeon-log">
-              <div id="dungeon-list"></div>
-            </div>
-          </div>
-
-          <div class="panel accent-blood">
-            <div class="panel-header" data-panel="char-relations">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blood)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                <span class="panel-label">人际关系</span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-relations">
-              <div id="rel-list"></div>
-            </div>
-          </div>
-
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="char-squad">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-dim)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-                <span class="panel-label">小队 · <span id="squad-name">无</span></span>
-              </div>
-              <svg class="panel-chevron collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body collapsed" id="panel-char-squad">
-              <div id="squad-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========== TAB: 副本情报 ========== -->
-    <section class="tab-panel" id="tab-dungeon">
-
-      <div class="group-section">
-        <div class="group-header accent-ember" data-group="dungeon-global">
-          <span class="group-title" style="color:var(--ember-bright);">◆ 副本全局与任务</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-dungeon-global-body">
-
-          <!-- 副本元数据 -->
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="dungeon-meta">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
-                <span class="panel-label">副本元数据</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-dungeon-meta">
-              <div class="stat-row"><span class="stat-label">副本名称</span><span class="stat-value accent" id="meta-name">---</span></div>
-              <div class="stat-row"><span class="stat-label">副本来源</span><span class="stat-value dim" id="meta-src">---</span></div>
-              <div class="stat-row"><span class="stat-label">副本类型</span><span id="meta-type" class="tag tag-gray">未生成</span></div>
-              <div class="stat-row"><span class="stat-label">基准等级</span><span class="stat-value" id="meta-baselv">Lv.1</span></div>
-              <div class="stat-row"><span class="stat-label">时间限制</span><span class="stat-value dim" id="meta-time">---</span></div>
-            </div>
-          </div>
-
-          <!-- 任务面板 -->
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="dungeon-quests">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-                <span class="panel-label">当前副本任务</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-dungeon-quests">
-              <div class="sub-section"><div class="sub-title">主线任务</div><div id="quest-main"></div></div>
-              <div class="sub-section"><div class="sub-title">支线任务</div><div id="quest-side"></div></div>
-              <div class="sub-section"><div class="sub-title">隐藏任务</div><div id="quest-hidden"></div></div>
-              <div class="sub-section"><div class="sub-title">世界事件</div><div id="quest-world-events"></div></div>
-              <div class="sub-section"><div class="sub-title">副本成就</div><div id="quest-achievements"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 场内势力监控 -->
-      <div class="group-section">
-        <div class="group-header accent-ember" data-group="dungeon-factions">
-          <span class="group-title" style="color:var(--ember-bright);">◆ 场内势力监控</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-dungeon-factions-body">
-          <div class="panel accent-blood">
-            <div class="panel-header" data-panel="dungeon-inherent">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blood)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2v4m0 4v4m-5-5h4m4 0h4"/></svg></span>
-                <span class="panel-label">固有角色 · 世界背景板</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-dungeon-inherent">
-              <div id="inherent-chars-list"></div>
-            </div>
-          </div>
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="dungeon-contractors">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-dim)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
-                <span class="panel-label">其他契约者名单</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-dungeon-contractors">
-              <div id="other-conts-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- ========== TAB: 敌情警戒 ========== -->
-    <section class="tab-panel" id="tab-enemy">
-      <div class="group-section" style="border-color:rgba(248,81,73,0.2);">
-        <div class="group-header accent-blood" data-group="enemy-group" style="background:rgba(20,8,8,0.8);">
-          <span class="group-title" style="color:var(--blood-bright);">◆ 直接交战中目标</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-enemy-body">
-          <div class="panel accent-blood" style="border-color:rgba(248,81,73,0.2);margin:0;">
-            <div class="panel-header" data-panel="enemy-list-header" style="background:rgba(20,8,8,0.6);">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blood)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-                <span class="panel-label">当前敌人 · <span id="enemy-count">0</span></span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-enemy-list">
-              <div id="enemy-list"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== TAB: 回廊地图 ========== -->
-    <section class="tab-panel" id="tab-map">
-      <div class="group-section">
-        <div class="group-header accent-soul" data-group="map-global">
-          <span class="group-title" style="color:var(--soul);">◆ 全区地图导航</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-map-body">
-          <!-- 回廊广场枢纽 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="map-plaza">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-dim)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="3"/></svg></span>
-                <span class="panel-label">回廊广场枢纽</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-map-plaza">
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">回廊广场 (主城中心)</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">按阶位划分的安全区（一阶至五阶物理隔离）。绝对禁止武力冲突。休息周期结束前1小时在此集合等待副本传送。可进行物品面交摆摊。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">契约者排行榜石碑</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">位于广场中央，展示人、黄、玄、地、天五榜。仅展示淘汰赛前十名的称号、等级与小队。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">回廊悬赏板</span><span class="facility-req locked">权限不足 (上士解锁)</span></div><div class="facility-desc">接取回廊发布的定向击杀/采集/侦查悬赏任务，在下一个常规副本中自动激活，奖励UP和少量EXP。</div></div>
-            </div>
-          </div>
-
-          <!-- 商业交易区 -->
-          <div class="panel accent-gold">
-            <div class="panel-header" data-panel="map-commerce">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold-bright)" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2 2h3l1.6 8.2a2 2 0 0 0 1.9 1.8h9.2a2 2 0 0 0 1.9-1.6L21 4H6"/></svg></span>
-                <span class="panel-label">商业与交易区</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-map-commerce">
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">基础商店</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">出售一阶白/蓝装备和全部基础消耗品。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">高级市场</span><span class="facility-req locked">权限不足 (少尉解锁)</span></div><div class="facility-desc">出售蓝/绿/金装备、高级消耗品、各阶技能卷轴及职业书。支持回收非绑定装备（原价40%~60%）。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">军衔商店</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">根据军衔等级开放对应货架，消耗稀有货币(RP)兑换高级战略物资与特权。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">回廊密库</span><span class="facility-req locked">权限不足 (准将解锁)</span></div><div class="facility-desc">出售极稀有的紫传职业书、天赋试炼入场券、三转书及单属性突破药剂。</div></div>
-            </div>
-          </div>
-
-          <!-- 强化与职能区 -->
-          <div class="panel accent-ember">
-            <div class="panel-header" data-panel="map-upgrade">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ember-dim)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-                <span class="panel-label">强化与职能区</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-map-upgrade">
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">医疗中心</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">全HP治愈 (30UP) / 解除负面 (20UP) / 断肢及失明修复 (100UP)。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">强化室</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">进行装备强化。基础技能升级（Lv.1→5）。上士军衔额外解锁高级技能训练。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">职业馆</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">出售白色/蓝色基础职业书与一转职业书。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">回廊铸造室</span><span class="facility-req locked">权限不足 (少校解锁)</span></div><div class="facility-desc">可对蓝色及以上品质装备进行词条重铸，每件装备每赛季限3次。</div></div>
-            </div>
-          </div>
-
-          <!-- 战略控制设施 -->
-          <div class="panel accent-soul">
-            <div class="panel-header" data-panel="map-strategic">
-              <div class="panel-title-group">
-                <span class="panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--soul-dim)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-                <span class="panel-label">战略控制设施</span>
-              </div>
-              <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-            </div>
-            <div class="panel-body" id="panel-map-strategic">
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">个人储藏室</span><span class="facility-req unlocked">已解锁</span></div><div class="facility-desc">存放当前不需携带入本的装备与物资的独立安全空间。</div></div>
-              <div class="facility-card"><div class="facility-header-row"><span class="facility-name">世界调度室</span><span class="facility-req locked">权限不足 (上校解锁)</span></div><div class="facility-desc">花费100UP从三个随机副本中择一进入，或花费巨额UP指定回归曾经历的副本。并提供战前简报情报。</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== TAB: 职业树 ========== -->
-    <section class="tab-panel" id="tab-jobtree">
-      <div class="group-section" style="border-color:rgba(188,140,255,0.25);">
-        <div class="group-header accent-soul" data-group="jobtree-group">
-          <span class="group-title" style="color:var(--soul);">◆ 成长路线锚定</span>
-          <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
-        <div class="group-body" id="group-jobtree-body">
-          <div id="job-tree-content">
-            <div class="empty-state" style="padding:32px 16px;">
-              <div style="font-size:0.95rem;margin-bottom:8px;">目前尚未加载职业转职树数据</div>
-              <div style="font-size:0.78rem;">当获得职业时，系统将自动生成成长路线</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========== TAB: 回廊通讯 (Chat) ========== -->
-    <section class="tab-panel" id="tab-chat">
-      <div class="chat-container">
-        <div class="chat-messages" id="chat-messages">
-          <div class="chat-msg system">
-            <div class="chat-bubble">
-              无限回廊通讯频道已建立。回廊意志在此聆听每一位契约者的声音。
-            </div>
-          </div>
-          <div class="chat-msg assistant">
-            <div class="chat-avatar" style="background:var(--fire);color:#fff;">廊</div>
-            <div class="chat-bubble">
-              契约者，欢迎来到无限回廊。我是回廊意志的代理——你可以称呼我为「廊」。<br><br>
-              在这里，你需要穿梭于不同的副本世界，完成回廊赋予的任务。每一次生还都将使你更加强大。<br><br>
-              当前状态：<strong>待命</strong>。尚未检测到活跃副本任务。请先前往回廊广场了解基本情况，或使用 <strong>/roll</strong> 指令掷出命运骰，决定你的首次副本。
-            </div>
-          </div>
-        </div>
-        <div class="chat-input-area">
-          <input type="text" class="chat-input" id="chat-input" placeholder="输入指令或对话内容… (Enter 发送)" autocomplete="off">
-          <button class="btn btn-primary" id="chat-send-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            发送
-          </button>
-        </div>
-      </div>
-    </section>
-
-  </main>
+<!-- ============ 天花板层：管道 + 应急灯 ============ -->
+<div id="ceiling">
+  <div class="pipe pipe-left"></div>
+  <div class="pipe pipe-right"></div>
+  <div class="pipe-drip drip-left"></div>
+  <div class="pipe-drip drip-right"></div>
+  <div id="emergency-light">
+    <div class="light-bulb"></div>
+    <div class="light-cone"></div>
+  </div>
+  <div id="ceiling-notify">◆ 回廊通讯待命中 ◆</div>
 </div>
 
-<!-- Scripts -->
+<!-- ============ 回廊主体：3D 透视空间 ============ -->
+<div id="corridor">
+
+  <!-- 透视消失线 -->
+  <div class="perspective-lines">
+    <div class="vanish-line vl-top-left"></div>
+    <div class="vanish-line vl-top-right"></div>
+    <div class="vanish-line vl-bottom-left"></div>
+    <div class="vanish-line vl-bottom-right"></div>
+  </div>
+
+  <!-- 走廊深处尽头 —— 副本之门 -->
+  <div id="far-door">
+    <div class="door-frame">
+      <div class="door-label">NO. <span id="door-number">---</span></div>
+      <div class="door-placard" id="door-dungeon-name">当前无活跃副本</div>
+      <div class="door-light" id="door-light"></div>
+      <div class="door-handle"></div>
+    </div>
+    <div class="door-glow"></div>
+  </div>
+
+  <!-- ====== 左墙 ====== -->
+  <div id="left-wall" class="wall">
+    <!-- 契约者档案 —— 像一张钉在墙上的表格 -->
+    <div class="wall-poster" id="poster-identity">
+      <div class="poster-header">
+        <span class="poster-pin">◆</span>
+        <span class="poster-title">契约者档案</span>
+        <span class="poster-pin">◆</span>
+      </div>
+      <div class="poster-body">
+        <div class="poster-row"><span>姓名</span><span id="h-name">---</span></div>
+        <div class="poster-row"><span>阶位</span><span id="h-rank">一阶</span></div>
+        <div class="poster-row"><span>等级</span><span id="h-lv"><span class="chalk-num" data-path="契约者.头部.等级">3</span></span></div>
+        <div class="poster-row"><span>军衔</span><span id="h-army">上士</span></div>
+        <div class="poster-row"><span>CR</span><span id="h-cr">4.2</span></div>
+        <div class="poster-row"><span>回廊态度</span><span id="h-att">关注</span></div>
+      </div>
+    </div>
+
+    <!-- 属性 —— 像刻在墙上的粉笔标记 -->
+    <div class="wall-markings" id="markings-stats">
+      <div class="mark-row">
+        <span class="mark-label">STR</span>
+        <span class="mark-val" id="attr-str">11</span>
+        <span class="mark-bar"><span class="mark-fill str" id="fill-str"></span></span>
+      </div>
+      <div class="mark-row">
+        <span class="mark-label">AGI</span>
+        <span class="mark-val" id="attr-agi">6</span>
+        <span class="mark-bar"><span class="mark-fill agi" id="fill-agi"></span></span>
+      </div>
+      <div class="mark-row">
+        <span class="mark-label">CON</span>
+        <span class="mark-val" id="attr-con">18</span>
+        <span class="mark-bar"><span class="mark-fill con" id="fill-con"></span></span>
+      </div>
+      <div class="mark-row">
+        <span class="mark-label">PER</span>
+        <span class="mark-val" id="attr-per">9</span>
+        <span class="mark-bar"><span class="mark-fill per" id="fill-per"></span></span>
+      </div>
+    </div>
+
+    <!-- 小队 —— 墙上照片 -->
+    <div class="wall-polaroids" id="squad-polaroids"></div>
+  </div>
+
+  <!-- ====== 右墙 ====== -->
+  <div id="right-wall" class="wall">
+
+    <!-- HP/MP 状态 —— 墙上的仪表盘 -->
+    <div class="wall-gauge" id="gauge-hp">
+      <div class="gauge-label">HP</div>
+      <div class="gauge-track"><div class="gauge-fill hp-fill" id="gauge-hp-fill"></div></div>
+      <div class="gauge-num" id="gauge-hp-num">218/270</div>
+    </div>
+    <div class="wall-gauge" id="gauge-mp">
+      <div class="gauge-label">MP</div>
+      <div class="gauge-track"><div class="gauge-fill mp-fill" id="gauge-mp-fill"></div></div>
+      <div class="gauge-num" id="gauge-mp-num">90/90</div>
+    </div>
+    <div class="wall-gauge" id="gauge-sp">
+      <div class="gauge-label">耐力</div>
+      <div class="gauge-track"><div class="gauge-fill sp-fill" id="gauge-sp-fill"></div></div>
+      <div class="gauge-num" id="gauge-sp-num">155/180</div>
+    </div>
+
+    <!-- 生命状态 + 特殊状态 —— 警示标志 -->
+    <div class="wall-warning" id="warning-life">
+      <div class="warn-stripes"></div>
+      <div class="warn-text" id="state-life">受伤</div>
+    </div>
+    <div class="wall-warning small" id="warning-special">
+      <div class="warn-stripes"></div>
+      <div class="warn-text" id="state-special-text">疲惫</div>
+    </div>
+
+    <!-- 敌人情报 —— 墙上警报 -->
+    <div class="wall-alert" id="alert-enemies">
+      <div class="alert-header">◆ 交战中 ◆</div>
+      <div class="alert-count" id="enemy-count-wall">0</div>
+    </div>
+  </div>
+
+  <!-- ====== 地面：物品与互动 ====== -->
+  <div id="floor">
+    <div class="floor-grid"></div>
+    <div class="floor-items" id="floor-items">
+      <!-- 散落在地上的物品会在这里显示 -->
+    </div>
+    <div class="floor-reflections"></div>
+  </div>
+
+  <!-- ====== 走廊中心站：核心交互区 ====== -->
+  <div id="hallway-center">
+    <!-- 墙上血字提示 -->
+    <div id="blood-text">NEVER<br>LOOK<br>BACK</div>
+
+    <!-- 地上的通讯器 -->
+    <div id="radio" title="回廊通讯器">
+      <div class="radio-body">
+        <div class="radio-speaker"></div>
+        <div class="radio-dial"></div>
+        <div class="radio-light"></div>
+      </div>
+      <div class="radio-label">回廊通讯</div>
+    </div>
+
+    <!-- 墙上的按钮面板 -->
+    <div id="wall-panel">
+      <button class="panel-btn active" data-view="identity" title="状态档案">
+        <span class="btn-icon">◎</span><span class="btn-label">档案</span>
+      </button>
+      <button class="panel-btn" data-view="dungeon" title="副本情报">
+        <span class="btn-icon">◈</span><span class="btn-label">副本</span>
+      </button>
+      <button class="panel-btn" data-view="enemies" title="敌情警戒">
+        <span class="btn-icon">⚠</span><span class="btn-label">敌情</span>
+      </button>
+      <button class="panel-btn" data-view="map" title="回廊地图">
+        <span class="btn-icon">⊙</span><span class="btn-label">地图</span>
+      </button>
+      <button class="panel-btn" data-view="jobtree" title="职业树">
+        <span class="btn-icon">⟐</span><span class="btn-label">职业</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ 详情覆盖层（点击墙上海报展开） ============ -->
+<div id="detail-overlay">
+  <div id="detail-panel">
+    <div id="detail-close">╳</div>
+    <div id="detail-content"></div>
+  </div>
+  <div id="detail-backdrop"></div>
+</div>
+
+<!-- ============ 回廊通讯器展开 ============ -->
+<div id="radio-overlay">
+  <div id="radio-panel">
+    <div id="radio-static"></div>
+    <div id="radio-messages"></div>
+    <div id="radio-input-area">
+      <input type="text" id="radio-input" placeholder="按住通话…" autocomplete="off">
+      <button id="radio-send">发送</button>
+    </div>
+    <div id="radio-close">关闭通讯</div>
+  </div>
+  <div id="radio-backdrop"></div>
+</div>
+
 <script src="js/app.js"></script>
 </body>
 </html>
