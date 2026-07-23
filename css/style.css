@@ -595,3 +595,373 @@ body {
   .hud-label { font-size: 0.6rem; width: 22px; }
   .hud-num { font-size: 0.6rem; min-width: 40px; }
 }
+
+/* ============================================================
+   酒馆助手 · 手机界面 — P.T. 里世界锈蚀终端
+   ============================================================ */
+
+/* ---------- 触发按钮：锈铁符文 ---------- */
+#phone-trigger {
+  position: fixed;
+  bottom: 80px; right: 28px;
+  width: 52px; height: 52px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--iron-dark), #0e0a07);
+  border: 2px solid var(--iron);
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 0 16px rgba(180,80,20,0.2), 0 4px 12px rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  animation: phoneBtnGlow 4s ease-in-out infinite;
+}
+#phone-trigger:hover {
+  border-color: var(--blood-bright);
+  box-shadow: 0 0 28px rgba(180,60,20,0.4), 0 4px 16px rgba(0,0,0,0.7);
+  transform: translateY(-3px);
+}
+#phone-trigger:active { transform: scale(0.94); transition-duration: 0.1s; }
+#phone-trigger.dragging { transition: none !important; cursor: grabbing; }
+@keyframes phoneBtnGlow {
+  0%,100% { box-shadow: 0 0 16px rgba(180,80,20,0.2), 0 4px 12px rgba(0,0,0,0.6); }
+  50% { box-shadow: 0 0 24px rgba(200,100,30,0.35), 0 4px 14px rgba(0,0,0,0.65); }
+}
+
+#phone-trigger .rune-svg {
+  width: 28px; height: 28px;
+  overflow: visible;
+}
+#phone-trigger .rune-outer {
+  fill: none; stroke: var(--amber-dim);
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  animation: runeSpin 12s linear infinite;
+  transform-origin: 16px 16px;
+}
+#phone-trigger .rune-inner {
+  fill: none; stroke: var(--amber);
+  stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round;
+  animation: runeSpin 12s linear infinite reverse;
+  transform-origin: 16px 16px;
+}
+#phone-trigger .rune-dot {
+  fill: var(--blood-bright);
+  animation: runeDotPulse 3s ease-in-out infinite;
+}
+@keyframes runeSpin { to { transform: rotate(360deg); } }
+@keyframes runeDotPulse {
+  0%,100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ---------- 手机覆盖层 ---------- */
+#phone-overlay {
+  position: fixed; inset: 0;
+  background: rgba(2,1,0,0.82);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: none;
+  align-items: center; justify-content: center;
+  animation: fadeIn 0.25s;
+}
+#phone-overlay.open { display: flex; }
+
+/* ---------- 手机框架 ---------- */
+#phone-frame {
+  position: relative;
+  width: 90%; max-width: 375px;
+  aspect-ratio: 375/737;
+  background: linear-gradient(180deg, var(--iron), var(--iron-dark));
+  border-radius: 36px;
+  padding: 7px;
+  box-shadow:
+    0 0 0 2px rgba(60,30,15,0.5),
+    0 0 40px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(80,40,20,0.3);
+  overflow: hidden;
+  animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+#phone-frame::before {
+  content: ''; position: absolute; top: 28px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,160,100,0.25), transparent);
+  z-index: 10; pointer-events: none;
+}
+
+/* 锈蚀斑块 */
+#phone-frame::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+  background:
+    radial-gradient(ellipse at 85% 12%, rgba(90,25,8,0.25) 0%, transparent 30%),
+    radial-gradient(ellipse at 10% 75%, rgba(60,15,5,0.2) 0%, transparent 25%),
+    radial-gradient(ellipse at 50% 90%, rgba(40,10,5,0.15) 0%, transparent 20%);
+}
+
+/* ---------- 手机屏幕 ---------- */
+#phone-screen {
+  width: 100%; height: 100%;
+  border-radius: 30px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  position: relative;
+  background: linear-gradient(180deg, #0c0907 0%, #0a0705 50%, #080503 100%);
+}
+
+/* ---------- 状态栏 ---------- */
+.phone-status-bar {
+  height: 38px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(8,5,3,0.7);
+  backdrop-filter: blur(8px);
+  font-family: var(--font-mono); font-size: 0.7rem;
+  border-bottom: 1px solid rgba(60,30,20,0.2);
+  z-index: 5;
+}
+.phone-status-bar .ps-time { color: var(--amber); letter-spacing: 1px; }
+.phone-status-bar .ps-center { display: flex; align-items: center; gap: 6px; }
+.phone-status-bar .ps-indicator {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--blood-bright);
+  box-shadow: 0 0 4px var(--blood);
+  animation: dangerPulse 2s ease-in-out infinite;
+}
+.phone-status-bar .ps-label {
+  color: var(--chalk-dim); font-size: 0.6rem; letter-spacing: 1px;
+}
+.phone-status-actions { display: flex; align-items: center; gap: 8px; }
+.phone-pin-btn {
+  background: none; border: 1px solid var(--iron);
+  color: var(--chalk-dim); font-size: 0.65rem;
+  cursor: pointer; padding: 2px 6px; border-radius: 3px;
+  font-family: var(--font-display); letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.phone-pin-btn:hover { border-color: var(--amber); color: var(--amber); }
+.phone-pin-btn.pinned { border-color: var(--blood-bright); color: var(--blood-bright); }
+
+/* ---------- 主屏内容 ---------- */
+.phone-content {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,50,20,0.3) transparent;
+}
+.phone-content::-webkit-scrollbar { width: 3px; }
+.phone-content::-webkit-scrollbar-track { background: transparent; }
+.phone-content::-webkit-scrollbar-thumb { background: rgba(100,50,20,0.3); border-radius: 2px; }
+
+/* ---------- 头部卡片 ---------- */
+.phone-header-card {
+  padding: 18px 20px 10px; text-align: center; flex-shrink: 0;
+}
+.phone-header-card .ph-time {
+  font-family: var(--font-display); font-size: 2.4rem;
+  color: var(--amber); letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(200,150,80,0.3);
+}
+.phone-header-card .ph-date {
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--chalk-dim); letter-spacing: 2px; margin-top: 2px;
+}
+.phone-header-card .ph-world {
+  font-family: var(--font-display); font-size: 0.8rem;
+  color: var(--blood-bright); letter-spacing: 2px; margin-top: 6px;
+  text-shadow: 0 0 8px rgba(120,20,10,0.3);
+}
+
+/* ---------- 快捷状态 ---------- */
+.phone-quick-stats {
+  display: flex; justify-content: center; gap: 18px;
+  padding: 6px 20px 14px; flex-shrink: 0;
+}
+.phone-quick-stats .qs-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-width: 44px;
+}
+.qs-val {
+  font-family: var(--font-mono); font-size: 0.85rem;
+  font-weight: 700; color: var(--chalk);
+}
+.qs-val.hp { color: var(--blood-bright); }
+.qs-val.mp { color: #5a8a7a; }
+.qs-val.sp { color: var(--amber-dim); }
+.qs-lbl {
+  font-family: var(--font-display); font-size: 0.55rem;
+  color: var(--chalk-dim); letter-spacing: 1px;
+}
+
+/* ---------- 应用网格 ---------- */
+.phone-app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 8px;
+  padding: 8px 18px 16px;
+  flex-shrink: 0;
+}
+.phone-app-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; transition: all 0.25s;
+  padding: 6px 0;
+}
+.phone-app-item:hover { filter: brightness(1.3); }
+.phone-app-item:active { transform: scale(0.92); }
+.phone-app-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  position: relative;
+  border: 1px solid rgba(100,50,20,0.3);
+  background: linear-gradient(135deg, rgba(20,12,8,0.9), rgba(12,7,4,0.95));
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: all 0.25s;
+}
+.phone-app-item:hover .phone-app-icon {
+  border-color: var(--blood-bright);
+  box-shadow: 0 2px 16px rgba(160,40,20,0.3);
+}
+.phone-app-icon .app-svg {
+  width: 24px; height: 24px; overflow: visible;
+}
+.phone-app-icon .app-svg line,
+.phone-app-icon .app-svg path,
+.phone-app-icon .app-svg rect,
+.phone-app-icon .app-svg circle {
+  stroke: var(--amber-dim);
+  stroke-width: 1.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.phone-app-icon .app-svg .fill-blood { fill: var(--blood-bright); stroke: none; }
+.phone-app-icon .app-svg .fill-amber { fill: var(--amber-dim); stroke: none; }
+.phone-app-label {
+  font-family: var(--font-display); font-size: 0.6rem;
+  letter-spacing: 1px; color: var(--chalk-dim);
+  text-align: center; line-height: 1.2;
+}
+
+/* 分割线 */
+.phone-divider {
+  height: 1px; margin: 4px 20px;
+  background: linear-gradient(90deg, transparent, rgba(100,50,20,0.25), transparent);
+  flex-shrink: 0;
+}
+
+/* 底部文字 */
+.phone-footer {
+  text-align: center; padding: 10px 20px 16px; flex-shrink: 0;
+  font-family: var(--font-display); font-size: 0.55rem;
+  color: rgba(100,50,20,0.5); letter-spacing: 3px;
+}
+
+/* ---------- 详情面板 ---------- */
+#phone-detail-panel {
+  position: absolute; inset: 38px 0 0 0;
+  background: linear-gradient(180deg, #0c0907, #080503);
+  display: none; flex-direction: column; z-index: 6;
+}
+#phone-detail-panel.open { display: flex; }
+.phone-detail-header {
+  display: flex; align-items: center; padding: 8px 12px;
+  border-bottom: 1px solid rgba(100,50,20,0.2);
+  gap: 10px; flex-shrink: 0;
+}
+.phone-back-btn {
+  background: none; border: 1px solid var(--iron);
+  color: var(--amber-dim); cursor: pointer;
+  width: 30px; height: 30px; border-radius: 4px;
+  font-family: var(--font-display); font-size: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.phone-back-btn:hover { border-color: var(--amber); color: var(--amber); }
+.phone-detail-title {
+  font-family: var(--font-display); font-size: 0.85rem;
+  letter-spacing: 2px; color: var(--amber);
+}
+.phone-detail-body {
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,50,20,0.3) transparent;
+}
+.phone-detail-body::-webkit-scrollbar { width: 3px; }
+.phone-detail-body::-webkit-scrollbar-track { background: transparent; }
+.phone-detail-body::-webkit-scrollbar-thumb { background: rgba(100,50,20,0.3); border-radius: 2px; }
+
+/* 手机内联行 */
+.phone-row {
+  display: flex; justify-content: space-between; padding: 4px 0;
+  border-bottom: 1px dotted rgba(100,50,20,0.12);
+  font-size: 0.75rem;
+}
+.phone-row:last-child { border-bottom: none; }
+.phone-row .pr-l { color: var(--chalk-dim); }
+.phone-row .pr-v { color: var(--amber); font-weight: 700; text-align: right; }
+.phone-tag {
+  display: inline-block; padding: 2px 8px; font-size: 0.6rem;
+  letter-spacing: 1px; font-weight: 700; margin: 1px;
+  background: rgba(120,50,20,0.2); color: var(--rust-light);
+  border: 1px solid rgba(120,50,20,0.3);
+}
+
+/* ---------- 聊天面板 ---------- */
+#phone-chat-panel {
+  position: absolute; inset: 38px 0 0 0;
+  background: linear-gradient(180deg, #0c0907, #080503);
+  display: none; flex-direction: column; z-index: 6;
+}
+#phone-chat-panel.open { display: flex; }
+.phone-chat-msgs {
+  flex: 1; overflow-y: auto; padding: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,50,20,0.3) transparent;
+}
+.phone-chat-msgs::-webkit-scrollbar { width: 3px; }
+.phone-chat-msgs::-webkit-scrollbar-track { background: transparent; }
+.phone-chat-msgs::-webkit-scrollbar-thumb { background: rgba(100,50,20,0.3); border-radius: 2px; }
+.phone-chat-msg {
+  max-width: 85%; padding: 8px 12px; border-radius: 6px;
+  font-size: 0.72rem; line-height: 1.5;
+  font-family: var(--font-body);
+}
+.phone-chat-msg.user {
+  align-self: flex-end;
+  background: rgba(40,15,8,0.6); border: 1px solid rgba(100,40,20,0.3);
+  color: var(--chalk);
+}
+.phone-chat-msg.other {
+  align-self: flex-start;
+  background: rgba(10,8,6,0.8); border: 1px solid var(--iron);
+  color: var(--amber);
+}
+.phone-chat-input-row {
+  display: flex; gap: 6px; padding: 10px 12px;
+  border-top: 1px solid rgba(100,50,20,0.2); flex-shrink: 0;
+}
+.phone-chat-input-row input {
+  flex: 1; padding: 8px 12px;
+  background: rgba(10,6,4,0.8); border: 1px solid var(--iron);
+  color: var(--amber); font-family: var(--font-body); font-size: 0.75rem;
+  outline: none; border-radius: 4px;
+}
+.phone-chat-input-row input:focus { border-color: var(--blood-bright); }
+.phone-chat-input-row input::placeholder { color: rgba(160,140,120,0.3); }
+.phone-chat-send {
+  padding: 8px 14px;
+  background: var(--iron-dark); border: 1px solid var(--iron);
+  color: var(--amber); cursor: pointer; border-radius: 4px;
+  font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.phone-chat-send:hover { border-color: var(--blood-bright); color: var(--emerge); }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 480px) {
+  #phone-trigger { bottom: 70px; right: 12px; width: 42px; height: 42px; }
+  #phone-trigger .rune-svg { width: 24px; height: 24px; }
+  #phone-frame { max-width: 320px; border-radius: 30px; padding: 5px; }
+  #phone-screen { border-radius: 25px; }
+  .phone-app-icon { width: 40px; height: 40px; border-radius: 10px; }
+  .phone-app-icon .app-svg { width: 20px; height: 20px; }
+}
