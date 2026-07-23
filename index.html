@@ -8,192 +8,181 @@
 </head>
 <body>
 
-<!-- ============ 天花板层：管道 + 应急灯 ============ -->
-<div id="ceiling">
-  <div class="pipe pipe-left"></div>
-  <div class="pipe pipe-right"></div>
-  <div class="pipe-drip drip-left"></div>
-  <div class="pipe-drip drip-right"></div>
-  <div id="emergency-light">
-    <div class="light-bulb"></div>
-    <div class="light-cone"></div>
+<!-- ============ 余烬背景 ============ -->
+<canvas id="ember-bg"></canvas>
+
+<!-- ============ 天花板 ============ -->
+<div id="ceiling-slab">
+  <div id="ceiling-pipes">
+    <div class="pipe-run"></div>
+    <div class="pipe-run delay"></div>
   </div>
-  <div id="ceiling-notify">◆ 回廊通讯待命中 ◆</div>
+  <div id="hanging-light">
+    <div class="bulb-wire"></div>
+    <div class="bulb-glass"></div>
+  </div>
 </div>
 
-<!-- ============ 回廊主体：3D 透视空间 ============ -->
-<div id="corridor">
+<!-- ============ 回廊主体 ============ -->
+<div id="corridor-scene">
 
-  <!-- 透视消失线 -->
-  <div class="perspective-lines">
-    <div class="vanish-line vl-top-left"></div>
-    <div class="vanish-line vl-top-right"></div>
-    <div class="vanish-line vl-bottom-left"></div>
-    <div class="vanish-line vl-bottom-right"></div>
+  <!-- 左墙 -->
+  <div id="wall-left" class="corridor-wall">
+
+    <!-- 血肉纹理 -->
+    <div class="flesh-veins"></div>
+    <div class="rust-patches"></div>
+    <div class="blood-streak s1"></div>
+    <div class="blood-streak s2"></div>
+
+    <!-- 门洞1：契约者档案（近） -->
+    <div class="doorway dl-1" data-view="identity">
+      <div class="door-recess">
+        <div class="door-plate">契 约 者 档 案</div>
+        <div class="door-status" id="door-status-identity">◆ 活跃 ◆</div>
+      </div>
+      <div class="door-bloodstain"></div>
+    </div>
+
+    <!-- 门洞2：小队（中近） -->
+    <div class="doorway dl-2" data-view="squad">
+      <div class="door-recess">
+        <div class="door-plate">小 队 名 册</div>
+        <div class="door-status dim" id="door-status-squad">无队员</div>
+      </div>
+    </div>
+
+    <!-- 门洞3：职业树（远） -->
+    <div class="doorway dl-3" data-view="jobtree">
+      <div class="door-recess">
+        <div class="door-plate">职 业 路 线</div>
+        <div class="door-status" id="door-status-job">前线突击兵</div>
+      </div>
+    </div>
+
+    <!-- 墙上刻字 -->
+    <div class="wall-scratch scratch-l1">NO RETURN</div>
+    <div class="wall-scratch scratch-l2">契约即枷锁</div>
   </div>
 
-  <!-- 走廊深处尽头 —— 副本之门 -->
-  <div id="far-door">
-    <div class="door-frame">
-      <div class="door-label">NO. <span id="door-number">---</span></div>
-      <div class="door-placard" id="door-dungeon-name">当前无活跃副本</div>
-      <div class="door-light" id="door-light"></div>
-      <div class="door-handle"></div>
+  <!-- 右墙 -->
+  <div id="wall-right" class="corridor-wall">
+
+    <div class="flesh-veins right"></div>
+    <div class="rust-patches right"></div>
+    <div class="blood-streak s3"></div>
+
+    <!-- 门洞4：副本情报（近） -->
+    <div class="doorway dr-1" data-view="dungeon">
+      <div class="door-recess">
+        <div class="door-plate">副 本 情 报</div>
+        <div class="door-status" id="door-status-dungeon">无活跃副本</div>
+      </div>
+      <div class="door-crack"></div>
     </div>
-    <div class="door-glow"></div>
+
+    <!-- 门洞5：敌情警戒（中近） -->
+    <div class="doorway dr-2" data-view="enemies">
+      <div class="door-recess">
+        <div class="door-plate">敌 情 警 戒</div>
+        <div class="door-status danger" id="door-status-enemies">安全</div>
+      </div>
+      <div class="door-alert-light"></div>
+    </div>
+
+    <!-- 门洞6：回廊地图（远） -->
+    <div class="doorway dr-3" data-view="map">
+      <div class="door-recess">
+        <div class="door-plate">回 廊 地 图</div>
+        <div class="door-status dim">15 处设施</div>
+      </div>
+    </div>
+
+    <!-- 墙上手印 -->
+    <div class="wall-handprint hp1"></div>
+    <div class="wall-handprint hp2"></div>
   </div>
 
-  <!-- ====== 左墙 ====== -->
-  <div id="left-wall" class="wall">
-    <!-- 契约者档案 —— 像一张钉在墙上的表格 -->
-    <div class="wall-poster" id="poster-identity">
-      <div class="poster-header">
-        <span class="poster-pin">◆</span>
-        <span class="poster-title">契约者档案</span>
-        <span class="poster-pin">◆</span>
-      </div>
-      <div class="poster-body">
-        <div class="poster-row"><span>姓名</span><span id="h-name">---</span></div>
-        <div class="poster-row"><span>阶位</span><span id="h-rank">一阶</span></div>
-        <div class="poster-row"><span>等级</span><span id="h-lv"><span class="chalk-num" data-path="契约者.头部.等级">3</span></span></div>
-        <div class="poster-row"><span>军衔</span><span id="h-army">上士</span></div>
-        <div class="poster-row"><span>CR</span><span id="h-cr">4.2</span></div>
-        <div class="poster-row"><span>回廊态度</span><span id="h-att">关注</span></div>
-      </div>
+  <!-- ====== 地面 ====== -->
+  <div id="floor-plain">
+    <div class="floor-grid-lines"></div>
+    <div class="floor-blood-pool"></div>
+    <div class="floor-crack"></div>
+
+    <!-- 地上物品 -->
+    <div class="floor-item fi-1" id="bag-teaser">
+      <span class="fi-icon">▣</span>
+      <span class="fi-label">背包</span>
+      <span class="fi-count" id="bag-count">4件</span>
+    </div>
+    <div class="floor-item fi-2" id="radio-teaser">
+      <span class="fi-icon">◉</span>
+      <span class="fi-label">通讯器</span>
     </div>
 
-    <!-- 属性 —— 像刻在墙上的粉笔标记 -->
-    <div class="wall-markings" id="markings-stats">
-      <div class="mark-row">
-        <span class="mark-label">STR</span>
-        <span class="mark-val" id="attr-str">11</span>
-        <span class="mark-bar"><span class="mark-fill str" id="fill-str"></span></span>
-      </div>
-      <div class="mark-row">
-        <span class="mark-label">AGI</span>
-        <span class="mark-val" id="attr-agi">6</span>
-        <span class="mark-bar"><span class="mark-fill agi" id="fill-agi"></span></span>
-      </div>
-      <div class="mark-row">
-        <span class="mark-label">CON</span>
-        <span class="mark-val" id="attr-con">18</span>
-        <span class="mark-bar"><span class="mark-fill con" id="fill-con"></span></span>
-      </div>
-      <div class="mark-row">
-        <span class="mark-label">PER</span>
-        <span class="mark-val" id="attr-per">9</span>
-        <span class="mark-bar"><span class="mark-fill per" id="fill-per"></span></span>
-      </div>
-    </div>
-
-    <!-- 小队 —— 墙上照片 -->
-    <div class="wall-polaroids" id="squad-polaroids"></div>
+    <!-- 脚印 -->
+    <div class="footprint fp1"></div>
+    <div class="footprint fp2"></div>
   </div>
 
-  <!-- ====== 右墙 ====== -->
-  <div id="right-wall" class="wall">
-
-    <!-- HP/MP 状态 —— 墙上的仪表盘 -->
-    <div class="wall-gauge" id="gauge-hp">
-      <div class="gauge-label">HP</div>
-      <div class="gauge-track"><div class="gauge-fill hp-fill" id="gauge-hp-fill"></div></div>
-      <div class="gauge-num" id="gauge-hp-num">218/270</div>
-    </div>
-    <div class="wall-gauge" id="gauge-mp">
-      <div class="gauge-label">MP</div>
-      <div class="gauge-track"><div class="gauge-fill mp-fill" id="gauge-mp-fill"></div></div>
-      <div class="gauge-num" id="gauge-mp-num">90/90</div>
-    </div>
-    <div class="wall-gauge" id="gauge-sp">
-      <div class="gauge-label">耐力</div>
-      <div class="gauge-track"><div class="gauge-fill sp-fill" id="gauge-sp-fill"></div></div>
-      <div class="gauge-num" id="gauge-sp-num">155/180</div>
-    </div>
-
-    <!-- 生命状态 + 特殊状态 —— 警示标志 -->
-    <div class="wall-warning" id="warning-life">
-      <div class="warn-stripes"></div>
-      <div class="warn-text" id="state-life">受伤</div>
-    </div>
-    <div class="wall-warning small" id="warning-special">
-      <div class="warn-stripes"></div>
-      <div class="warn-text" id="state-special-text">疲惫</div>
-    </div>
-
-    <!-- 敌人情报 —— 墙上警报 -->
-    <div class="wall-alert" id="alert-enemies">
-      <div class="alert-header">◆ 交战中 ◆</div>
-      <div class="alert-count" id="enemy-count-wall">0</div>
-    </div>
-  </div>
-
-  <!-- ====== 地面：物品与互动 ====== -->
-  <div id="floor">
-    <div class="floor-grid"></div>
-    <div class="floor-items" id="floor-items">
-      <!-- 散落在地上的物品会在这里显示 -->
-    </div>
-    <div class="floor-reflections"></div>
-  </div>
-
-  <!-- ====== 走廊中心站：核心交互区 ====== -->
-  <div id="hallway-center">
-    <!-- 墙上血字提示 -->
-    <div id="blood-text">NEVER<br>LOOK<br>BACK</div>
-
-    <!-- 地上的通讯器 -->
-    <div id="radio" title="回廊通讯器">
-      <div class="radio-body">
-        <div class="radio-speaker"></div>
-        <div class="radio-dial"></div>
-        <div class="radio-light"></div>
+  <!-- ====== 走廊尽头 ====== -->
+  <div id="far-end">
+    <!-- 副本之门 -->
+    <div id="portal-door" data-view="dungeon">
+      <div class="portal-frame">
+        <div class="portal-glow"></div>
+        <div class="portal-surface"></div>
+        <div class="portal-label">◆ ENTER ◆</div>
+        <div class="portal-name" id="portal-name">当前无活跃副本</div>
       </div>
-      <div class="radio-label">回廊通讯</div>
+      <div class="portal-light-rays"></div>
     </div>
 
-    <!-- 墙上的按钮面板 -->
-    <div id="wall-panel">
-      <button class="panel-btn active" data-view="identity" title="状态档案">
-        <span class="btn-icon">◎</span><span class="btn-label">档案</span>
-      </button>
-      <button class="panel-btn" data-view="dungeon" title="副本情报">
-        <span class="btn-icon">◈</span><span class="btn-label">副本</span>
-      </button>
-      <button class="panel-btn" data-view="enemies" title="敌情警戒">
-        <span class="btn-icon">⚠</span><span class="btn-label">敌情</span>
-      </button>
-      <button class="panel-btn" data-view="map" title="回廊地图">
-        <span class="btn-icon">⊙</span><span class="btn-label">地图</span>
-      </button>
-      <button class="panel-btn" data-view="jobtree" title="职业树">
-        <span class="btn-icon">⟐</span><span class="btn-label">职业</span>
-      </button>
-    </div>
+    <!-- 门上方的血肉增生 -->
+    <div class="flesh-growth"></div>
   </div>
 
 </div>
 
-<!-- ============ 详情覆盖层（点击墙上海报展开） ============ -->
-<div id="detail-overlay">
-  <div id="detail-panel">
-    <div id="detail-close">╳</div>
-    <div id="detail-content"></div>
+<!-- ============ 底部 HUD 条 ============ -->
+<div id="hud-bar">
+  <!-- HP -->
+  <div class="hud-stat">
+    <span class="hud-label">HP</span>
+    <div class="hud-track"><div class="hud-fill hp" id="hud-hp-fill"></div></div>
+    <span class="hud-num" id="hud-hp-num">218/270</span>
   </div>
-  <div id="detail-backdrop"></div>
+  <!-- MP -->
+  <div class="hud-stat">
+    <span class="hud-label">MP</span>
+    <div class="hud-track"><div class="hud-fill mp" id="hud-mp-fill"></div></div>
+    <span class="hud-num" id="hud-mp-num">90/90</span>
+  </div>
+  <!-- SP -->
+  <div class="hud-stat">
+    <span class="hud-label">耐力</span>
+    <div class="hud-track"><div class="hud-fill sp" id="hud-sp-fill"></div></div>
+    <span class="hud-num" id="hud-sp-num">155/180</span>
+  </div>
+  <!-- Name -->
+  <div class="hud-stat hud-name">
+    <span class="hud-label">契约者</span>
+    <span class="hud-num" id="hud-name">---</span>
+  </div>
+  <!-- Life State -->
+  <div class="hud-stat">
+    <span class="hud-label">状态</span>
+    <span class="hud-num danger" id="hud-life-state">受伤</span>
+  </div>
 </div>
 
-<!-- ============ 回廊通讯器展开 ============ -->
-<div id="radio-overlay">
-  <div id="radio-panel">
-    <div id="radio-static"></div>
-    <div id="radio-messages"></div>
-    <div id="radio-input-area">
-      <input type="text" id="radio-input" placeholder="按住通话…" autocomplete="off">
-      <button id="radio-send">发送</button>
-    </div>
-    <div id="radio-close">关闭通讯</div>
+<!-- ============ 详情覆盖层 ============ -->
+<div id="overlay">
+  <div id="overlay-bg"></div>
+  <div id="overlay-panel">
+    <div id="overlay-close">╳</div>
+    <div id="overlay-content"></div>
   </div>
-  <div id="radio-backdrop"></div>
 </div>
 
 <script src="js/app.js"></script>

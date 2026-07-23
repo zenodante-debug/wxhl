@@ -1,8 +1,7 @@
 /* ============================================================
-   无限回廊 v5.0 — 回廊引擎
+   无限回廊 v6.0 — 里世界长廊引擎
    ============================================================ */
 
-// ============ Helpers ============
 const $ = (s, c) => (c || document).querySelector(s);
 const $$ = (s, c) => [...(c || document).querySelectorAll(s)];
 
@@ -12,486 +11,315 @@ function getNested(obj, path, def) {
   return cur !== undefined ? cur : def;
 }
 
-function setNested(obj, path, val) {
-  const keys = path.split('.'); const last = keys.pop();
-  let cur = obj;
-  for (const k of keys) { if (!(k in cur) || typeof cur[k] !== 'object') cur[k] = {}; cur = cur[k]; }
-  cur[last] = val;
-}
-
-function cloneDeep(obj) { return JSON.parse(JSON.stringify(obj)); }
-
-// ============ Ember Background ============
+// ============ Ember BG ============
 function initEmbers() {
-  const canvas = document.createElement('canvas');
-  canvas.id = 'ember-canvas';
-  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
-  document.body.prepend(canvas);
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-
-  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
-
-  for (let i = 0; i < 70; i++) {
-    particles.push({
-      x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.3, speedY: -(Math.random() * 0.2 + 0.05),
-      speedX: (Math.random() - 0.5) * 0.15, wobble: Math.random() * 0.3,
-      wobbleS: Math.random() * 0.01 + 0.003,
-      opacity: Math.random() * 0.4 + 0.1,
-      hue: Math.random() < 0.7 ? 'ember' : 'gold',
-      life: Math.random()
-    });
-  }
-  let frame = 0;
-  function animate() {
-    frame++; ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.y += p.speedY; p.x += p.speedX + Math.sin(frame * p.wobbleS) * p.wobble;
-      p.life -= 0.001;
-      if (p.life <= 0 || p.y < -20) { p.y = canvas.height + 20; p.x = Math.random() * canvas.width; p.life = 1; }
-      const a = p.opacity * Math.max(0, p.life);
-      if (a < 0.01) return;
-      ctx.beginPath();
-      ctx.fillStyle = p.hue === 'ember' ? `rgba(180,80,30,${a})` : `rgba(180,140,70,${a * 0.7})`;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath();
-      ctx.fillStyle = p.hue === 'ember' ? `rgba(200,80,30,${a * 0.2})` : `rgba(180,140,70,${a * 0.15})`;
-      ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2); ctx.fill();
-    });
-    requestAnimationFrame(animate);
-  }
-  animate();
+  const c = $('#ember-bg');
+  const ctx = c.getContext('2d');
+  const P = [];
+  function R() { c.width = innerWidth; c.height = innerHeight; }
+  R(); window.addEventListener('resize', R);
+  for (let i = 0; i < 50; i++) P.push({ x: Math.random() * c.width, y: Math.random() * c.height, r: Math.random() * 1.2 + 0.2, vy: -(Math.random() * 0.15 + 0.04), vx: (Math.random() - 0.5) * 0.1, o: Math.random() * 0.35 + 0.08, life: Math.random() });
+  let f = 0;
+  (function A() { f++; ctx.clearRect(0, 0, c.width, c.height);
+    P.forEach(p => { p.y += p.vy; p.x += p.vx + Math.sin(f * 0.008 + p.life) * 0.2; p.life -= 0.001; if (p.life <= 0 || p.y < -20) { p.y = c.height + 20; p.x = Math.random() * c.width; p.life = 1; }
+      const a = p.o * Math.max(0, p.life); if (a < 0.01) return;
+      ctx.beginPath(); ctx.fillStyle = `rgba(180,80,30,${a})`; ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.fillStyle = `rgba(200,100,40,${a * 0.15})`; ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2); ctx.fill(); });
+    requestAnimationFrame(A); })();
 }
-
-// ============ Toast ============
-const Toast = {
-  container: null,
-  init() { this.container = $('#toast-container'); if (!this.container) { const el = document.createElement('div'); el.id = 'toast-container'; document.body.appendChild(el); this.container = el; } },
-  show(msg, duration = 3000) {
-    if (!this.container) this.init();
-    const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
-    this.container.appendChild(el);
-    setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 300); }, duration);
-  }
-};
 
 // ============ Game Data ============
-const GameData = {
-  stat_data: {
-    '当前世界': '现实', '当前时间': { '现实日期': '2025年5月10日', '现实时间': '凌晨00:00', '副本日期': '不在副本中', '客观时间': '不在副本中', '地点': '回廊广场 · 一阶区', '阶段进度': '0%' },
-    '契约者': {
-      '头部': { '姓名': '未命名', '等级': 3, 'EXP_当前': 35, 'EXP_升级所需': 150, '阶位': '一阶', '军衔': '上士', 'RP_当前': 12, 'RP_下一级': 15, 'CR': 4.2, '回廊态度': '关注', '属性软上限': 25, '天赋': { '名称': '钢铁意志', '品质': '蓝', '属性加成': 'CON +3', '效果': { '坚韧': '受到致命伤害时15%概率保留1HP' } }, '称号': { '名称': '初探深渊者', '效果': { '威压': '对一阶以下生物+5%伤害' } } },
-      '属性': { '基础': { 'STR': 8, 'AGI': 6, 'CON': 12, 'PER': 9 }, '自定义加成': { 'STR': 0, 'AGI': 0, 'CON': 0, 'PER': 0 }, '加成': { 'STR': 3, 'AGI': 0, 'CON': 6, 'PER': 0 }, '实际': { 'STR': 11, 'AGI': 6, 'CON': 18, 'PER': 9 }, '未分配属性点': 2 },
-      '衍生属性': { 'HP_最大': 270, 'HP_当前': 218, 'MP_最大': 90, 'MP_当前': 90, '耐力_最大': 180, '耐力_当前': 155, '防御': 12, '闪避值': 11, '移动距离': 6, '负重_上限': 55, '负重_当前': 18 },
-      '状态': { '生命状态': '受伤', '特殊状态': { '疲惫': '连续作战8h，全属性判定-1' } },
-      '经济': { 'UP': 245 },
-      '赛季信息': { '当前赛季': 21, '当前副本周期': 3 }, '资格分': 45, '排行榜': { '当前排名': '未上榜', '排行榜被动': '无' },
-      '职业': { '名称': '前线突击兵', '稀有度': '绿', '转职阶段': '一转', '职业等级': 5, '主属性加成': { '属性': 'STR', '值': 3 }, '副属性加成': { '属性': 'CON', '值': 3 } },
-      '装备': {
-        '头部': { '名称': '战术头盔 MK-II', '类型': '头部防具', '品质': '蓝色', '强化等级': 2, '主属性': 'CON', '主属性加成': 2, '装备防御': 4, '装备闪避': 1, '负重': 3, '效果': '头部伤害-15%' },
-        '躯干': { '名称': '突击兵战术背心', '类型': '躯干防具', '品质': '绿色', '强化等级': 3, '主属性': 'CON', '主属性加成': 1, '装备防御': 8, '负重': 8, '效果': '物理伤害减免5%' },
-        '主手': { '名称': '先锋突袭步枪', '类型': '突击步枪', '品质': '蓝色', '强化等级': 3, '伤害骰': '2d10', '倍率': 1, '主属性': 'STR', '主属性加成': 0, '负重': 5, '效果': '暴击伤害+20%' },
-        '饰品1': { '名称': '契约者铭牌', '类型': '饰品', '品质': '绿色', '主属性': 'PER', '主属性加成': 0, '效果': '回廊声望+5%' }
-      },
-      '背包': { '医疗包 (标准)': { '数量': 3, '品质': '白', '类型': '消耗品', '效果': '回复30HP' }, '破片手雷': { '数量': 2, '品质': '白', '类型': '投掷武器', '伤害骰': '4d6' } },
-      '小队': { '名称': '无', '成员': {} },
-      '当前副本元数据': { '副本名称': '不在副本中', '副本来源': '---', '副本类型': '---', '基准等级': 1, '时间限制': '---' },
-      '固有角色': {}, '其他契约者名单': {},
-      '当前副本任务': { '主线任务': {}, '支线任务': {}, '隐藏任务': {}, '世界事件': {}, '副本成就': {} },
-      '当前敌人': {},
-      '职业': {
-        '名称': '前线突击兵', '稀有度': '绿', '转职阶段': '一转', '职业等级': 5, '主属性加成': { '属性': 'STR', '值': 3 }, '副属性加成': { '属性': 'CON', '值': 3 },
-        '职业技能': {
-          '破甲突刺': { '名称': '破甲突刺', '分类': '银色', '类型': '物理', '阶位': '一阶', '等级': 3, '关联属性': 'STR', '行动类型': '攻击', '消耗': 'MP 15', '冷却': '2回合', '效果': { '伤害': '2d8+STR+职业等级×2', '破甲': '无视50%装备防御' } },
-          '战术翻滚': { '名称': '战术翻滚', '分类': '普通', '类型': '身法', '阶位': '一阶', '等级': 2, '关联属性': 'AGI', '行动类型': '闪避', '消耗': '耐力 10', '冷却': '3回合', '效果': { '闪避提升': '本回合闪避+15', '位移': '2m' } }
-        },
-        '职业特性': { '冲锋突击': { '效果': '每移动3m伤害+2%' }, '战场适应': { '效果': '范围伤害CON判定减半' } },
-        '传承技能': { '血战意志': { '等级': 1, '效果': 'HP<30%时伤害+20%' } },
-        '转职树': { '名称': '前线突击兵', '状态': '当前', '分支': { '重装先锋': { '状态': '未解锁', '分支': { '铁壁守护者': { '状态': '未选择' }, '破阵重甲兵': { '状态': '未选择' } } }, '轻装斥候': { '状态': '未解锁', '分支': { '暗影猎手': { '状态': '未选择' }, '疾风游侠': { '状态': '未选择' } } } } }
-      },
-      '通用技能': { '急救包扎': { '名称': '急救包扎', '分类': '普通', '类型': '治疗', '等级': 2, '效果': { '恢复': '2d6+PER HP' } }, '侦查之眼': { '名称': '侦查之眼', '分类': '高级', '类型': '感知', '等级': 1, '效果': { '探测': '感知30m隐藏目标' } } },
-      '副本经历': { '新手试炼·废墟都市': { '评价等级': 'B', '简要说明': '首次进入回廊副本' }, '血色黎明·古堡突围': { '评价等级': 'A', '简要说明': '获得稀有血族遗物' } },
-      '人际关系': { '「零」- 神秘少女': { '好感度': 45, '关系': '多次在关键时刻提供帮助' }, '王猛 - 重甲战士': { '好感度': 30, '关系': '古堡副本并肩作战' } }
-    }
+const G = { stat_data: {
+  '当前世界': '现实', '当前时间': { '现实日期': '2025年5月10日', '现实时间': '凌晨00:00', '副本日期': '不在副本中', '地点': '回廊广场 · 一阶区' },
+  '契约者': {
+    '头部': { '姓名': '未命名', '等级': 3, 'EXP_当前': 35, 'EXP_升级所需': 150, '阶位': '一阶', '军衔': '上士', 'RP_当前': 12, 'RP_下一级': 15, 'CR': 4.2, '回廊态度': '关注', '属性软上限': 25, '天赋': { '名称': '钢铁意志', '品质': '蓝', '属性加成': 'CON +3', '效果': { '坚韧': '受致命伤15%概率保留1HP' } }, '称号': { '名称': '初探深渊者', '效果': { '威压': '对一阶以下生物+5%伤害' } } },
+    '属性': { '基础': { 'STR': 8, 'AGI': 6, 'CON': 12, 'PER': 9 }, '加成': { 'STR': 3, 'AGI': 0, 'CON': 6, 'PER': 0 }, '实际': { 'STR': 11, 'AGI': 6, 'CON': 18, 'PER': 9 }, '未分配属性点': 2 },
+    '衍生属性': { 'HP_最大': 270, 'HP_当前': 218, 'MP_最大': 90, 'MP_当前': 90, '耐力_最大': 180, '耐力_当前': 155, '防御': 12, '闪避值': 11, '移动距离': 6, '负重_上限': 55, '负重_当前': 18 },
+    '状态': { '生命状态': '受伤', '特殊状态': { '疲惫': '连续作战8h，全属性判定-1' } },
+    '经济': { 'UP': 245 }, '赛季信息': { '当前赛季': 21, '当前副本周期': 3 }, '资格分': 45, '排行榜': { '当前排名': '未上榜', '排行榜被动': '无' },
+    '装备': { '头部': { '名称': '战术头盔 MK-II', '品质': '蓝', '强化等级': 2, '主属性': 'CON', '主属性加成': 2, '装备防御': 4 }, '躯干': { '名称': '突击兵战术背心', '品质': '绿', '强化等级': 3, '主属性': 'CON', '主属性加成': 1, '装备防御': 8 }, '主手': { '名称': '先锋突袭步枪', '品质': '蓝', '强化等级': 3, '伤害骰': '2d10' }, '饰品1': { '名称': '契约者铭牌', '品质': '绿', '主属性': 'PER' } },
+    '背包': { '医疗包 (标准)': { '数量': 3, '品质': '白' }, '肾上腺素注射器': { '数量': 1, '品质': '绿' }, '破片手雷': { '数量': 2, '品质': '白', '伤害骰': '4d6' }, '猎人瞄准镜': { '数量': 1, '品质': '蓝', '主属性': 'PER', '主属性加成': 2 } },
+    '小队': { '名称': '无', '成员': {} },
+    '当前副本元数据': { '副本名称': '不在副本中', '副本来源': '---', '副本类型': '---', '基准等级': 1, '时间限制': '---' },
+    '固有角色': {}, '其他契约者名单': {},
+    '当前副本任务': { '主线任务': {}, '支线任务': {}, '隐藏任务': {}, '世界事件': {}, '副本成就': {} },
+    '当前敌人': {},
+    '职业': { '名称': '前线突击兵', '稀有度': '绿', '转职阶段': '一转', '职业等级': 5, '主属性加成': { '属性': 'STR', '值': 3 }, '副属性加成': { '属性': 'CON', '值': 3 },
+      '职业技能': { '破甲突刺': { '名称': '破甲突刺', '分类': '银色', '类型': '物理', '等级': 3, '效果': { '伤害': '2d8+STR+2', '破甲': '无视50%防御' } }, '战术翻滚': { '名称': '战术翻滚', '分类': '普通', '类型': '身法', '等级': 2, '效果': { '闪避': '+15', '位移': '2m' } } },
+      '职业特性': { '冲锋突击': { '效果': '每移动3m伤害+2%' } },
+      '传承技能': { '血战意志': { '等级': 1, '效果': 'HP<30%伤害+20%' } },
+      '转职树': { '名称': '前线突击兵', '状态': '当前', '分支': { '重装先锋': { '状态': '未解锁', '分支': { '铁壁守护者': {}, '破阵重甲兵': {} } }, '轻装斥候': { '状态': '未解锁', '分支': { '暗影猎手': {}, '疾风游侠': {} } } } }
+    },
+    '通用技能': { '急救包扎': { '名称': '急救包扎', '类型': '治疗', '等级': 2 }, '侦查之眼': { '名称': '侦查之眼', '类型': '感知', '等级': 1 } },
+    '副本经历': { '新手试炼·废墟都市': { '评价等级': 'B', '简要说明': '首次副本' }, '血色黎明·古堡突围': { '评价等级': 'A', '简要说明': '获得稀有血族遗物' } },
+    '人际关系': { '「零」- 神秘少女': { '好感度': 45, '关系': '多次关键帮助' }, '王猛 - 重甲战士': { '好感度': 30, '关系': '古堡并肩作战' } }
   }
-};
+}};
+function D(p, def) { return getNested(G.stat_data, p, def); }
 
-function d(path, def) { return getNested(GameData.stat_data, path, def); }
+// ============ Populate HUD & Walls ============
+function populate() {
+  const d = D;
+  // HUD
+  const hpm = d('契约者.衍生属性.HP_最大', 0), hpc = d('契约者.衍生属性.HP_当前', 0);
+  const mpm = d('契约者.衍生属性.MP_最大', 0), mpc = d('契约者.衍生属性.MP_当前', 0);
+  const spm = d('契约者.衍生属性.耐力_最大', 0), spc = d('契约者.衍生属性.耐力_当前', 0);
+  setText('hud-hp-num', hpc + '/' + hpm); setStyle('hud-hp-fill', 'width', Math.min(hpc / Math.max(hpm, 1) * 100, 100) + '%');
+  setText('hud-mp-num', mpc + '/' + mpm); setStyle('hud-mp-fill', 'width', Math.min(mpc / Math.max(mpm, 1) * 100, 100) + '%');
+  setText('hud-sp-num', spc + '/' + spm); setStyle('hud-sp-fill', 'width', Math.min(spc / Math.max(spm, 1) * 100, 100) + '%');
+  setText('hud-name', d('契约者.头部.姓名', '---'));
+  setText('hud-life-state', d('契约者.状态.生命状态', '健康'));
 
-// ============ Populate Walls ============
-function populateWalls() {
-  // Identity poster
-  setText('h-name', d('契约者.头部.姓名', '---'));
-  setText('h-rank', d('契约者.头部.阶位', '一阶'));
-  setHtml('h-lv', '<span class="chalk-num" data-path="契约者.头部.等级">' + d('契约者.头部.等级', 1) + '</span>');
-  setText('h-army', d('契约者.头部.军衔', '列兵'));
-  setText('h-cr', d('契约者.头部.CR', 3.0));
-  setText('h-att', d('契约者.头部.回廊态度', '观察'));
+  // Door statuses
+  const metaName = d('契约者.当前副本元数据.副本名称', '---');
+  const dungeonActive = metaName !== '不在副本中' && metaName !== '---';
+  setText('door-status-dungeon', dungeonActive ? metaName : '无活跃副本');
+  $('#door-status-dungeon').className = 'door-status' + (dungeonActive ? '' : ' dim');
 
-  // Stat markings
-  const softCap = d('契约者.头部.属性软上限', 25);
-  ['STR', 'AGI', 'CON', 'PER'].forEach((attr, i) => {
-    const names = ['str', 'agi', 'con', 'per'];
-    const val = d(`契约者.属性.实际.${attr}`, 5);
-    setText(`attr-${names[i]}`, val);
-    setStyle(`fill-${names[i]}`, 'width', Math.min(val / softCap * 100, 100) + '%');
-  });
-
-  // HP/MP/SP gauges
-  const hpMax = d('契约者.衍生属性.HP_最大', 0), hpCur = d('契约者.衍生属性.HP_当前', 0);
-  const mpMax = d('契约者.衍生属性.MP_最大', 0), mpCur = d('契约者.衍生属性.MP_当前', 0);
-  const spMax = d('契约者.衍生属性.耐力_最大', 0), spCur = d('契约者.衍生属性.耐力_当前', 0);
-  setText('gauge-hp-num', hpCur + '/' + hpMax);
-  setText('gauge-mp-num', mpCur + '/' + mpMax);
-  setText('gauge-sp-num', spCur + '/' + spMax);
-  setStyle('gauge-hp-fill', 'width', Math.min(hpCur / Math.max(hpMax, 1) * 100, 100) + '%');
-  setStyle('gauge-mp-fill', 'width', Math.min(mpCur / Math.max(mpMax, 1) * 100, 100) + '%');
-  setStyle('gauge-sp-fill', 'width', Math.min(spCur / Math.max(spMax, 1) * 100, 100) + '%');
-
-  // Warnings
-  const lifeState = d('契约者.状态.生命状态', '健康');
-  setText('state-life', lifeState);
-  const specStates = d('契约者.状态.特殊状态', {});
-  const ssKeys = Object.keys(specStates);
-  setText('state-special-text', ssKeys.length > 0 ? ssKeys[0] : '无异常');
-
-  // Enemies
   const enemies = d('契约者.当前敌人', {});
   const enKeys = Object.keys(enemies);
-  setText('enemy-count-wall', enKeys.length);
+  setText('door-status-enemies', enKeys.length > 0 ? '交战中: ' + enKeys.length : '安全');
+  $('#door-status-enemies').className = 'door-status' + (enKeys.length > 0 ? ' danger' : ' dim');
 
-  // Door
-  const meta = d('契约者.当前副本元数据', {});
-  const dungeonName = getNested(meta, '副本名称', '---');
-  setText('door-dungeon-name', dungeonName);
-  setText('door-number', dungeonName === '不在副本中' || dungeonName === '---' ? '---' : '001');
-  const doorLight = $('#door-light');
-  if (doorLight) { if (dungeonName !== '不在副本中' && dungeonName !== '---') doorLight.classList.add('active'); else doorLight.classList.remove('active'); }
+  setText('door-status-identity', d('契约者.头部.姓名', '---'));
+  setText('door-status-squad', d('契约者.小队.名称', '无队员'));
+  setText('door-status-job', d('契约者.职业.名称', '无'));
 
-  // Squad polaroids
-  const squad = d('契约者.小队.成员', {});
-  const sqKeys = Object.keys(squad);
-  let ph = '';
-  if (sqKeys.length === 0) ph = '<div class="polaroid"><div class="polaroid-name">暂无队员</div></div>';
-  else sqKeys.forEach(k => {
-    const m = squad[k] || {};
-    ph += `<div class="polaroid"><div class="polaroid-name">${k}</div><div class="polaroid-info">Lv.${getNested(m, '头部.等级', 1)} · ${getNested(m, '职业.名称', '无')}</div></div>`;
-  });
-  setHtml('squad-polaroids', ph);
+  // Portal
+  setText('portal-name', dungeonActive ? metaName : '当前无活跃副本');
+  const pl = $('#portal-label');
+  if (pl) pl.textContent = dungeonActive ? '◆ ENTER ◆' : '◆ 待命 ◆';
 
-  // Floor items (bag preview)
+  // Bag count
   const bag = d('契约者.背包', {});
-  const bagKeys = Object.keys(bag);
-  let fh = '';
-  const show = bagKeys.slice(0, 4);
-  show.forEach(k => { fh += `<div class="floor-item">${k}×${bag[k].数量 || 1}</div>`; });
-  if (bagKeys.length > 4) fh += `<div class="floor-item">+${bagKeys.length - 4} 件…</div>`;
-  setHtml('floor-items', fh);
-
-  bindChalkNumbers();
+  setText('bag-count', Object.keys(bag).length + '件');
 }
-
 function setText(id, t) { const el = $('#' + id); if (el) el.textContent = t; }
 function setHtml(id, h) { const el = $('#' + id); if (el) el.innerHTML = h; }
 function setStyle(id, p, v) { const el = $('#' + id); if (el) el.style[p] = v; }
 
-// ============ Chalk Numbers (inline editing) ============
-function bindChalkNumbers() {
-  $$('.chalk-num').forEach(el => {
-    el.removeEventListener('click', chalkClick);
-    el.addEventListener('click', chalkClick);
-  });
-}
-function chalkClick(e) {
-  e.stopPropagation();
-  const el = e.target;
-  if (el.querySelector('input')) return;
-  const path = el.dataset.path;
-  const cur = parseFloat(el.textContent);
-  const input = document.createElement('input');
-  input.type = 'number'; input.step = 'any'; input.value = cur;
-  input.style.cssText = 'width:' + (Math.max(el.offsetWidth, 24) + 10) + 'px;background:rgba(10,8,6,0.9);color:var(--amber-light);border:1px solid var(--rust);font-family:var(--font-mono);font-size:inherit;text-align:center;outline:none;';
-  el.textContent = ''; el.appendChild(input);
-  input.focus(); input.select();
-  const commit = () => {
-    const nv = parseFloat(input.value);
-    if (!isNaN(nv) && nv !== cur) {
-      setNested(GameData.stat_data, path, nv);
-      populateWalls();
-      Toast.show('已记录: ' + path.split('.').pop() + ' → ' + nv);
-    } else populateWalls();
-  };
-  input.addEventListener('blur', commit);
-  input.addEventListener('keydown', ev => { if (ev.key === 'Enter') commit(); });
-}
-
-// ============ Detail Overlay ============
-const Detail = {
-  overlay: null, panel: null, backdrop: null, content: null,
+// ============ Overlay ============
+const Overlay = {
   init() {
-    this.overlay = $('#detail-overlay');
-    this.panel = $('#detail-panel');
-    this.backdrop = $('#detail-backdrop');
-    this.content = $('#detail-content');
-    $('#detail-close').addEventListener('click', () => this.close());
-    this.backdrop.addEventListener('click', () => this.close());
+    this.ov = $('#overlay'); this.content = $('#overlay-content');
+    $('#overlay-close').addEventListener('click', () => this.close());
+    $('#overlay-bg').addEventListener('click', () => this.close());
     document.addEventListener('keydown', e => { if (e.key === 'Escape') this.close(); });
   },
-  open(html) { if (!this.overlay) this.init(); this.content.innerHTML = html; this.overlay.classList.add('open'); },
-  close() { if (this.overlay) this.overlay.classList.remove('open'); }
+  open(html) { if (!this.ov) this.init(); this.content.innerHTML = html; this.ov.classList.add('open'); },
+  close() { if (this.ov) this.ov.classList.remove('open'); }
 };
 
-// ============ Detail Content Generators ============
-function detailIdentity() {
-  const d2 = (p, def) => d(p, def);
-  const talent = d2('契约者.头部.天赋', {});
-  const title = d2('契约者.头部.称号', {});
-  let h = '<div class="detail-section"><div class="detail-section-header">契约者档案 <span>▼</span></div><div class="detail-section-body">';
-  h += '<div class="detail-row"><span class="dl">姓名</span><span class="dv">' + d2('契约者.头部.姓名') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">等级</span><span class="dv">Lv.' + d2('契约者.头部.等级') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">EXP</span><span class="dv">' + d2('契约者.头部.EXP_当前') + ' / ' + d2('契约者.头部.EXP_升级所需') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">阶位</span><span class="dv">' + d2('契约者.头部.阶位') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">军衔</span><span class="dv">' + d2('契约者.头部.军衔') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">RP</span><span class="dv">' + d2('契约者.头部.RP_当前') + ' / ' + d2('契约者.头部.RP_下一级') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">CR</span><span class="dv">' + d2('契约者.头部.CR') + '</span></div>';
-  h += '</div></div>';
+// ============ Detail Views ============
+function sec(title, body) {
+  return `<div class="ov-section"><div class="ov-section-header">${title} <span>▼</span></div><div class="ov-section-body">${body}</div></div>`;
+}
+function row(l, v, cls) { return `<div class="ov-row"><span class="ol">${l}</span><span class="ov${cls ? ' ' + cls : ''}">${v}</span></div>`; }
+function tag(t, c) { return `<span class="ov-tag ${c}">${t}</span>`; }
 
-  // Attributes
-  h += '<div class="detail-section"><div class="detail-section-header">属性 <span>▼</span></div><div class="detail-section-body">';
-  ['STR','AGI','CON','PER'].forEach(a => {
-    h += '<div class="detail-row"><span class="dl">' + a + '</span><span class="dv">基础 ' + d2('契约者.属性.基础.' + a) + ' + 加成 ' + d2('契约者.属性.加成.' + a) + ' = <b>' + d2('契约者.属性.实际.' + a) + '</b></span></div>';
-  });
-  const free = d2('契约者.属性.未分配属性点', 0);
-  h += '<div class="detail-row"><span class="dl">未分配</span><span class="dv" style="color:var(--rust-light);">' + free + '</span></div>';
-  h += '</div></div>';
+function viewIdentity() {
+  const d = (p, def) => D(p, def);
+  let h = sec('契约者档案',
+    row('姓名', d('契约者.头部.姓名')) +
+    row('等级', 'Lv.' + d('契约者.头部.等级')) +
+    row('EXP', d('契约者.头部.EXP_当前') + ' / ' + d('契约者.头部.EXP_升级所需')) +
+    row('阶位', d('契约者.头部.阶位')) +
+    row('军衔', d('契约者.头部.军衔')) +
+    row('RP', d('契约者.头部.RP_当前') + ' / ' + d('契约者.头部.RP_下一级')) +
+    row('CR', d('契约者.头部.CR')) +
+    row('回廊态度', d('契约者.头部.回廊态度'))
+  );
 
-  // Talent & Title
+  h += sec('属性',
+    ['STR','AGI','CON','PER'].map(a => row(a, `基础${d('契约者.属性.基础.'+a)} + 加成${d('契约者.属性.加成.'+a)} = <b>${d('契约者.属性.实际.'+a)}</b>`)).join('') +
+    row('未分配', d('契约者.属性.未分配属性点'), 'rust')
+  );
+
+  h += sec('衍生属性',
+    row('HP', d('契约者.衍生属性.HP_当前') + ' / ' + d('契约者.衍生属性.HP_最大')) +
+    row('MP', d('契约者.衍生属性.MP_当前') + ' / ' + d('契约者.衍生属性.MP_最大')) +
+    row('耐力', d('契约者.衍生属性.耐力_当前') + ' / ' + d('契约者.衍生属性.耐力_最大')) +
+    row('防御', d('契约者.衍生属性.防御')) +
+    row('闪避', d('契约者.衍生属性.闪避值')) +
+    row('负重', d('契约者.衍生属性.负重_当前') + ' / ' + d('契约者.衍生属性.负重_上限') + 'kg')
+  );
+
+  const talent = d('契约者.头部.天赋', {});
   const tName = getNested(talent, '名称', '');
-  if (tName && tName !== '无') {
-    h += '<div class="detail-section"><div class="detail-section-header">天赋 <span>▼</span></div><div class="detail-section-body">';
-    h += '<div class="detail-row"><span class="dl">名称</span><span class="dv">' + tName + '</span></div>';
-    h += '<div class="detail-row"><span class="dl">品质</span><span class="dv">' + getNested(talent, '品质', '') + '</span></div>';
-    h += '<div class="detail-row"><span class="dl">加成</span><span class="dv">' + getNested(talent, '属性加成', '') + '</span></div>';
-    h += '</div></div>';
-  }
+  if (tName && tName !== '无') h += sec('天赋', row('名称', tName) + row('品质', getNested(talent, '品质', '')) + row('加成', getNested(talent, '属性加成', '')));
+
+  const specStates = d('契约者.状态.特殊状态', {});
+  Object.keys(specStates).forEach(k => { h += sec('状态: ' + k, '<div style="font-size:0.78rem;color:var(--chalk-dim);">' + specStates[k] + '</div>'); });
+
   return h;
 }
 
-function detailDungeon() {
+function viewDungeon() {
+  const d = (p, def) => D(p, def);
   const meta = d('契约者.当前副本元数据', {});
-  let h = '<div class="detail-section"><div class="detail-section-header">副本元数据 <span>▼</span></div><div class="detail-section-body">';
-  h += '<div class="detail-row"><span class="dl">副本名称</span><span class="dv">' + getNested(meta, '副本名称', '---') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">副本来源</span><span class="dv">' + getNested(meta, '副本来源', '---') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">副本类型</span><span class="dv">' + getNested(meta, '副本类型', '---') + '</span></div>';
-  h += '<div class="detail-row"><span class="dl">基准等级</span><span class="dv">Lv.' + getNested(meta, '基准等级', 1) + '</span></div>';
-  h += '</div></div>';
-
-  // Quests
-  const sections = [
-    ['主线任务', '契约者.当前副本任务.主线任务'],
-    ['支线任务', '契约者.当前副本任务.支线任务'],
-    ['隐藏任务', '契约者.当前副本任务.隐藏任务'],
-    ['世界事件', '契约者.当前副本任务.世界事件'],
-    ['副本成就', '契约者.当前副本任务.副本成就']
-  ];
-  sections.forEach(([title, path]) => {
-    const data = d(path, {});
-    const keys = Object.keys(data);
-    h += '<div class="detail-section"><div class="detail-section-header">' + title + ' (' + keys.length + ') <span>▼</span></div><div class="detail-section-body">';
-    if (keys.length === 0) h += '<div style="color:var(--chalk-dim);font-style:italic;">暂无</div>';
-    else keys.forEach(k => {
-      const q = data[k] || {};
-      h += '<div class="detail-row"><span class="dl">' + k + '</span><span class="dv">' + getNested(q, '状态', '进行中') + '</span></div>';
-    });
-    h += '</div></div>';
+  let h = sec('副本元数据',
+    row('名称', getNested(meta, '副本名称', '---')) +
+    row('来源', getNested(meta, '副本来源', '---')) +
+    row('类型', getNested(meta, '副本类型', '---')) +
+    row('基准等级', 'Lv.' + getNested(meta, '基准等级', 1)) +
+    row('时间限制', getNested(meta, '时间限制', '---'))
+  );
+  const sections = [['主线任务', '契约者.当前副本任务.主线任务'], ['支线任务', '契约者.当前副本任务.支线任务'], ['隐藏任务', '契约者.当前副本任务.隐藏任务'], ['世界事件', '契约者.当前副本任务.世界事件'], ['副本成就', '契约者.当前副本任务.副本成就']];
+  sections.forEach(([t, p]) => {
+    const data = d(p, {}); const keys = Object.keys(data);
+    let body = keys.length === 0 ? '<div style="color:var(--chalk-dim);font-style:italic;">暂无</div>' : keys.map(k => row(k, getNested(data[k], '状态', '进行中'))).join('');
+    h += sec(t + ' (' + keys.length + ')', body);
   });
   return h;
 }
 
-function detailEnemies() {
-  const enemies = d('契约者.当前敌人', {});
+function viewEnemies() {
+  const enemies = D('契约者.当前敌人', {});
   const keys = Object.keys(enemies);
-  if (keys.length === 0) return '<div style="text-align:center;padding:40px;color:var(--chalk-dim);font-family:var(--font-display);letter-spacing:1px;">战场风平浪静</div>';
+  if (keys.length === 0) return '<div style="text-align:center;padding:48px;color:var(--chalk-dim);font-family:var(--font-display);letter-spacing:2px;">战场风平浪静</div>';
   let h = '';
   keys.forEach(k => {
     const en = enemies[k] || {};
-    h += '<div class="detail-section"><div class="detail-section-header">' + k + ' <span>▼</span></div><div class="detail-section-body">';
-    h += '<div class="detail-row"><span class="dl">等级</span><span class="dv">Lv.' + getNested(en, '头部.等级', 1) + '</span></div>';
-    h += '<div class="detail-row"><span class="dl">阶位</span><span class="dv">' + getNested(en, '头部.阶位', '?') + '</span></div>';
-    h += '<div class="detail-row"><span class="dl">CR</span><span class="dv">' + getNested(en, '头部.CR', '?') + '</span></div>';
-    h += '<div class="detail-row"><span class="dl">HP</span><span class="dv">' + getNested(en, '衍生属性.HP_当前', '?') + ' / ' + getNested(en, '衍生属性.HP_最大', '?') + '</span></div>';
-    h += '</div></div>';
+    h += sec(k,
+      row('等级', 'Lv.' + getNested(en, '头部.等级', '?')) +
+      row('阶位', getNested(en, '头部.阶位', '?')) +
+      row('CR', getNested(en, '头部.CR', '?')) +
+      row('HP', getNested(en, '衍生属性.HP_当前', '?') + ' / ' + getNested(en, '衍生属性.HP_最大', '?'))
+    );
   });
   return h;
 }
 
-function detailMap() {
+function viewMap() {
   const facilities = [
-    ['回廊广场', '按阶位划分的安全区。绝对禁止武力冲突。', 'unlocked'],
-    ['排行榜石碑', '展示人黄玄地天五榜。', 'unlocked'],
-    ['回廊悬赏板', '接取回廊发布的定向悬赏任务。', 'locked'],
-    ['基础商店', '出售一阶白/蓝装备和基础消耗品。', 'unlocked'],
-    ['高级市场', '出售蓝/绿/金装备及技能卷轴。', 'locked'],
-    ['军衔商店', '根据军衔开放对应货架。', 'unlocked'],
-    ['回廊密库', '出售紫传职业书与天赋试炼券。', 'locked'],
-    ['医疗中心', '全HP治愈/解除负面/断肢修复。', 'unlocked'],
-    ['强化室', '装备强化与技能升级。', 'unlocked'],
-    ['职业馆', '出售基础与一转职业书。', 'unlocked'],
-    ['回廊铸造室', '蓝色以上装备词条重铸。', 'locked'],
-    ['个人储藏室', '存放不携带入本的装备物资。', 'unlocked'],
-    ['世界调度室', '花费UP选择或回归副本。', 'locked']
+    ['回廊广场', '按阶位划分的绝对安全区', true],
+    ['排行榜石碑', '展示人黄玄地天五榜', true],
+    ['回廊悬赏板', '接取定向悬赏任务', false],
+    ['基础商店', '一阶白/蓝装备与基础消耗品', true],
+    ['高级市场', '蓝/绿/金装备与技能卷轴', false],
+    ['军衔商店', '根据军衔开放对应货架', true],
+    ['回廊密库', '紫传职业书与天赋试炼券', false],
+    ['医疗中心', '全HP治愈(30UP)', true],
+    ['强化室', '装备强化与技能升级', true],
+    ['职业馆', '基础与一转职业书', true],
+    ['回廊铸造室', '蓝以上装备词条重铸', false],
+    ['个人储藏室', '独立安全储物空间', true],
+    ['世界调度室', '花费UP选择或回归副本', false]
   ];
-  let h = '<div class="detail-section"><div class="detail-section-header">全区地图 <span>▼</span></div><div class="detail-section-body">';
-  facilities.forEach(([name, desc, status]) => {
-    const cls = status === 'unlocked' ? 'tag-copper' : 'tag-blood';
-    const label = status === 'unlocked' ? '已解锁' : '权限不足';
-    h += '<div class="detail-row" style="flex-direction:column;align-items:flex-start;padding:6px 0;"><div style="display:flex;justify-content:space-between;width:100%;"><span class="dl">' + name + '</span><span class="detail-tag ' + cls + '">' + label + '</span></div><div style="font-size:0.7rem;color:var(--chalk-dim);margin-top:2px;">' + desc + '</div></div>';
+  return sec('全区地图 (' + facilities.length + '处)',
+    facilities.map(([n, d, u]) =>
+      `<div class="ov-row" style="flex-direction:column;align-items:flex-start;padding:5px 0;"><div style="display:flex;justify-content:space-between;width:100%;"><span class="ol">${n}</span>${tag(u ? '已解锁' : '权限不足', u ? 'copper' : 'blood')}</div><div style="font-size:0.7rem;color:var(--chalk-dim);margin-top:2px;">${d}</div></div>`
+    ).join('')
+  );
+}
+
+function viewJobTree() {
+  const tree = D('契约者.职业.转职树', null);
+  if (!tree) return '<div style="text-align:center;padding:48px;color:var(--chalk-dim);">尚未加载职业树</div>';
+  function render(d, name) {
+    const s = getNested(d, '状态', '?');
+    let c = 'iron'; if (s === '当前') c = 'rust'; else if (s === '已完成') c = 'copper';
+    let h = `<div style="margin:4px 0;padding-left:16px;border-left:1px solid rgba(60,30,20,0.2);"><span style="font-weight:700;">${name}</span> ${tag(s, c)}`;
+    const ch = getNested(d, '分支', {});
+    Object.keys(ch).forEach(k => { h += render(ch[k], k); });
+    h += '</div>'; return h;
+  }
+  return sec('转职路线', render(tree, getNested(tree, '名称', '根')));
+}
+
+function viewSquad() {
+  const squad = D('契约者.小队.成员', {});
+  const keys = Object.keys(squad);
+  if (keys.length === 0) return '<div style="text-align:center;padding:48px;color:var(--chalk-dim);font-family:var(--font-display);">暂无队员</div>';
+  let h = '';
+  keys.forEach(k => {
+    const m = squad[k] || {};
+    h += sec(k,
+      row('等级', 'Lv.' + getNested(m, '头部.等级', 1)) +
+      row('阶位', getNested(m, '头部.阶位', '?')) +
+      row('HP', getNested(m, '衍生属性.HP_当前', '?') + ' / ' + getNested(m, '衍生属性.HP_最大', '?')) +
+      row('职业', getNested(m, '职业.名称', '无'))
+    );
   });
-  h += '</div></div>';
   return h;
 }
 
-function detailJobTree() {
-  const tree = d('契约者.职业.转职树', null);
-  if (!tree) return '<div style="text-align:center;padding:40px;color:var(--chalk-dim);">尚未加载职业树</div>';
-  function renderNode(data, name) {
-    const status = getNested(data, '状态', '未选择');
-    let cls = 'detail-tag tag-iron';
-    if (status === '当前') cls = 'detail-tag tag-rust';
-    else if (status === '已完成') cls = 'detail-tag tag-copper';
-    let h = '<div style="margin:4px 0;padding-left:16px;border-left:1px solid var(--iron-dark);"><span style="font-weight:700;">' + name + '</span> <span class="' + cls + '">' + status + '</span>';
-    const children = getNested(data, '分支', {});
-    Object.keys(children).forEach(k => { h += renderNode(children[k], k); });
-    h += '</div>';
-    return h;
-  }
-  return '<div class="detail-section"><div class="detail-section-header">转职路线 <span>▼</span></div><div class="detail-section-body">' + renderNode(tree, getNested(tree, '名称', '根')) + '</div></div>';
-}
-
-function detailEquipment() {
-  const eq = d('契约者.装备', {});
+function viewBag() {
+  const bag = D('契约者.背包', {});
+  const keys = Object.keys(bag);
+  if (keys.length === 0) return '<div style="text-align:center;padding:48px;color:var(--chalk-dim);">空空如也</div>';
+  let h = sec('背包 (' + keys.length + '件)',
+    keys.map(k => {
+      const it = bag[k] || {};
+      return `<div class="ov-row"><span class="ol">${k}</span><span class="ov">×${getNested(it, '数量', 1)} ${getNested(it, '品质', '') ? tag(getNested(it, '品质', ''), 'rust') : ''}</span></div>`;
+    }).join('')
+  );
+  // Equipment
+  const eq = D('契约者.装备', {});
   const slots = ['头部','躯干','腿部','手部','脚部','主手','副手','饰品1','饰品2'];
-  let h = '<div class="detail-section"><div class="detail-section-header">装备 <span>▼</span></div><div class="detail-section-body">';
-  slots.forEach(s => {
-    const e = getNested(eq, s, {});
-    const name = getNested(e, '名称', '无');
-    h += '<div class="detail-row"><span class="dl">' + s + '</span><span class="dv" style="color:' + (name === '无' ? 'var(--chalk-dim)' : 'var(--amber-light)') + '">' + name + '</span></div>';
-  });
-  h += '</div></div>';
-
-  const bag = d('契约者.背包', {});
-  const bk = Object.keys(bag);
-  h += '<div class="detail-section"><div class="detail-section-header">背包 (' + bk.length + ') <span>▼</span></div><div class="detail-section-body">';
-  if (bk.length === 0) h += '<div style="color:var(--chalk-dim);">空空如也</div>';
-  else bk.forEach(k => { h += '<div class="detail-row"><span class="dl">' + k + '</span><span class="dv">×' + getNested(bag[k], '数量', 1) + '</span></div>'; });
-  h += '</div></div>';
+  h += sec('装备',
+    slots.map(s => {
+      const e = getNested(eq, s, {});
+      const name = getNested(e, '名称', '无');
+      return row(s, name === '无' ? '<span style="color:var(--chalk-dim)">---</span>' : name);
+    }).join('')
+  );
   return h;
 }
 
-// ============ Radio (Chat) System ============
-const Radio = {
-  overlay: null, messages: null, input: null,
-  init() {
-    this.overlay = $('#radio-overlay');
-    this.messages = $('#radio-messages');
-    this.input = $('#radio-input');
-    $('#radio-close').addEventListener('click', () => this.close());
-    $('#radio-backdrop').addEventListener('click', () => this.close());
-    $('#radio-send').addEventListener('click', () => this.send());
-    this.input.addEventListener('keydown', e => { if (e.key === 'Enter') this.send(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.overlay.classList.contains('open')) this.close(); });
-  },
-  open() { if (!this.overlay) this.init(); this.overlay.classList.add('open'); setTimeout(() => this.input.focus(), 400); },
-  close() { if (this.overlay) this.overlay.classList.remove('open'); },
-  send() {
-    const text = this.input.value.trim();
-    if (!text) return;
-    this.addMsg(text, 'user');
-    this.input.value = '';
-    setTimeout(() => {
-      const replies = ['收到。信号已传达到回廊深处。', '……正在处理你的请求。', '契约者，你的声音我听到了。', '通讯已记录。请保持警惕。', '回廊的回应正在穿越层层走廊。耐心等待。'];
-      this.addMsg(replies[Math.floor(Math.random() * replies.length)], 'ai');
-    }, 700 + Math.random() * 800);
-  },
-  addMsg(text, role) {
-    const el = document.createElement('div');
-    el.className = 'radio-msg ' + role;
-    el.textContent = text;
-    this.messages.appendChild(el);
-    this.messages.scrollTop = this.messages.scrollHeight;
-  }
-};
-
-// ============ Event Bindings ============
-function bindEvents() {
-  // Wall poster click → detail overlay
-  $('#poster-identity').addEventListener('click', () => Detail.open(detailIdentity()));
-
-  // Emergency light click → toggle detail
-  $('#emergency-light').addEventListener('click', () => Detail.open(detailIdentity()));
-
-  // Far door click → dungeon detail
-  $('#far-door').addEventListener('click', () => Detail.open(detailDungeon()));
-
-  // Warning click → detail
-  $('#warning-life').addEventListener('click', () => Detail.open(detailIdentity()));
-
-  // Alert click → enemy detail
-  $('#alert-enemies').addEventListener('click', () => Detail.open(detailEnemies()));
-
-  // Gauge clicks
-  $('#gauge-hp').addEventListener('click', () => Detail.open(detailIdentity()));
-  $('#gauge-mp').addEventListener('click', () => Detail.open(detailIdentity()));
-  $('#gauge-sp').addEventListener('click', () => Detail.open(detailIdentity()));
-
-  // Radio click
-  $('#radio').addEventListener('click', () => Radio.open());
-
-  // Floor items click → equipment/bag detail
-  $('#floor-items').addEventListener('click', () => Detail.open(detailEquipment()));
-
-  // Wall panel buttons
-  const views = {
-    identity: () => Detail.open(detailIdentity()),
-    dungeon: () => Detail.open(detailDungeon()),
-    enemies: () => Detail.open(detailEnemies()),
-    map: () => Detail.open(detailMap()),
-    jobtree: () => Detail.open(detailJobTree())
+// ============ Bindings ============
+function bind() {
+  // Doorway clicks
+  const doorViews = {
+    identity: viewIdentity, squad: viewSquad, jobtree: viewJobTree,
+    dungeon: viewDungeon, enemies: viewEnemies, map: viewMap
   };
-  $$('.panel-btn[data-view]').forEach(btn => {
-    btn.addEventListener('click', function() {
-      $$('.panel-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      const view = this.dataset.view;
-      if (views[view]) views[view]();
+  $$('.doorway[data-view]').forEach(door => {
+    door.addEventListener('click', function() {
+      const v = this.dataset.view;
+      if (doorViews[v]) Overlay.open(doorViews[v]());
     });
   });
+  // Portal door → dungeon detail
+  $('#portal-door').addEventListener('click', () => Overlay.open(viewDungeon()));
+  // Floor items
+  $('#bag-teaser').addEventListener('click', () => Overlay.open(viewBag()));
+  // Radio teaser → radio mode
+  $('#radio-teaser').addEventListener('click', () => {
+    Overlay.open('<div style="text-align:center;padding:48px;"><div style="font-family:var(--font-display);font-size:1rem;letter-spacing:2px;color:var(--amber);margin-bottom:16px;">回廊通讯器</div><div style="color:var(--chalk-dim);font-style:italic;">沙沙……信号微弱……</div><div style="margin-top:16px;"><input id="radio-msg-input" placeholder="输入讯息…" style="width:80%;padding:10px;background:rgba(10,6,4,0.8);border:1px solid var(--iron-dark);color:var(--amber);font-family:var(--font-body);outline:none;"><button id="radio-msg-send" style="margin-left:8px;padding:10px 16px;background:var(--iron-dark);border:1px solid var(--iron);color:var(--amber);cursor:pointer;font-family:var(--font-display);letter-spacing:1px;">发送</button></div><div id="radio-msg-log" style="margin-top:16px;text-align:left;"></div></div>');
+    setTimeout(() => {
+      const input = $('#radio-msg-input');
+      const log = $('#radio-msg-log');
+      const send = $('#radio-msg-send');
+      function doSend() {
+        const txt = input.value.trim(); if (!txt) return;
+        const u = document.createElement('div'); u.style.cssText = 'padding:6px 0;color:var(--chalk);text-align:right;'; u.textContent = '> ' + txt; log.appendChild(u);
+        input.value = '';
+        setTimeout(() => {
+          const replies = ['收到。信号传达中……', '……回廊深处有回应。', '契约者，保持警惕。', '通讯日志已记录。'];
+          const r = document.createElement('div'); r.style.cssText = 'padding:6px 0;color:var(--amber);'; r.textContent = replies[Math.floor(Math.random() * replies.length)]; log.appendChild(r);
+        }, 600 + Math.random() * 700);
+      }
+      send.addEventListener('click', doSend);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') doSend(); });
+      input.focus();
+    }, 100);
+  });
 
-  // Detail section collapse
-  $('#detail-content').addEventListener('click', function(e) {
-    const header = e.target.closest('.detail-section-header');
-    if (!header) return;
-    const body = header.nextElementSibling;
-    const arrow = header.querySelector('span');
+  // Overlay collapse
+  $('#overlay-content').addEventListener('click', function(e) {
+    const hdr = e.target.closest('.ov-section-header');
+    if (!hdr) return;
+    const body = hdr.nextElementSibling;
+    const arrow = hdr.querySelector('span');
     if (body) { body.classList.toggle('hidden'); if (arrow) arrow.textContent = body.classList.contains('hidden') ? '▶' : '▼'; }
   });
 
-  // Poster marks click
-  $('#markings-stats').addEventListener('click', () => Detail.open(detailIdentity()));
-  $('#squad-polaroids').addEventListener('click', () => Detail.open(detailIdentity()));
-
-  // Keyboard shortcuts
+  // Keyboard
   document.addEventListener('keydown', function(e) {
     if (e.ctrlKey) {
-      const map = { '1': detailIdentity, '2': detailDungeon, '3': detailEnemies, '4': detailMap, '5': detailJobTree };
-      const fn = map[e.key];
-      if (fn) { e.preventDefault(); Detail.open(fn()); }
-    }
-    // 'R' for radio
-    if (e.key === 'r' && !e.ctrlKey && !e.metaKey && document.activeElement === document.body) {
-      Radio.open();
+      const map = { '1': viewIdentity, '2': viewDungeon, '3': viewEnemies, '4': viewMap, '5': viewJobTree };
+      if (map[e.key]) { e.preventDefault(); Overlay.open(map[e.key]()); }
     }
   });
 }
@@ -499,18 +327,11 @@ function bindEvents() {
 // ============ Init ============
 function init() {
   initEmbers();
-  Toast.init();
-  Detail.init();
-  Radio.init();
-  populateWalls();
-  bindEvents();
-
-  setTimeout(() => Toast.show('你站在回廊中。前面的路通向未知。', 5000), 1500);
-
-  console.log('%c◆ 无限回廊 · Infinite Corridor %cv5.0',
-    'color:#c4a35a;font-size:1.2em;',
-    'color:#b5ac9a;');
-  console.log('%c你正站在回廊之中。', 'color:#7a7162;font-style:italic;');
+  Overlay.init();
+  populate();
+  bind();
+  console.log('%c◆ 无限回廊 v6.0%c — 你正站在长廊之中',
+    'color:#c8a060;font-size:1.1em;', 'color:#706050;');
 }
 
 document.addEventListener('DOMContentLoaded', init);

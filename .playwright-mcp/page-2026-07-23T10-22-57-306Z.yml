@@ -1,0 +1,145 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e9]:
+    - generic [ref=f7e10]:
+      - generic [ref=f7e12] [cursor=pointer]:
+        - generic [ref=f7e13]: 契 约 者 档 案
+        - generic [ref=f7e14]: 未命名
+      - generic [ref=f7e16] [cursor=pointer]:
+        - generic [ref=f7e17]: 小 队 名 册
+        - generic [ref=f7e18]: 无
+      - generic [ref=f7e20] [cursor=pointer]:
+        - generic [ref=f7e21]: 职 业 路 线
+        - generic [ref=f7e22]: 前线突击兵
+      - generic: NO RETURN
+      - generic: 契约即枷锁
+    - generic [ref=f7e23]:
+      - generic [ref=f7e25] [cursor=pointer]:
+        - generic [ref=f7e26]: 副 本 情 报
+        - generic [ref=f7e27]: 无活跃副本
+      - generic [ref=f7e29] [cursor=pointer]:
+        - generic [ref=f7e30]: 敌 情 警 戒
+        - generic [ref=f7e31]: 安全
+      - generic [ref=f7e34] [cursor=pointer]:
+        - generic [ref=f7e35]: 回 廊 地 图
+        - generic [ref=f7e36]: 15 处设施
+    - generic [ref=f7e37]:
+      - generic [ref=f7e38] [cursor=pointer]:
+        - generic [ref=f7e39]: ▣
+        - generic [ref=f7e40]: 背包
+        - generic [ref=f7e41]: 4件
+      - generic [ref=f7e42] [cursor=pointer]:
+        - generic [ref=f7e43]: ◉
+        - generic [ref=f7e44]: 通讯器
+    - generic [ref=f7e47] [cursor=pointer]:
+      - generic [ref=f7e49]: ◆ ENTER ◆
+      - generic [ref=f7e50]: 当前无活跃副本
+  - generic [ref=f7e51]:
+    - generic [ref=f7e52]:
+      - generic [ref=f7e53]: HP
+      - generic [ref=f7e56]: 218/270
+    - generic [ref=f7e57]:
+      - generic [ref=f7e58]: MP
+      - generic [ref=f7e61]: 90/90
+    - generic [ref=f7e62]:
+      - generic [ref=f7e63]: 耐力
+      - generic [ref=f7e66]: 155/180
+    - generic [ref=f7e67]:
+      - generic [ref=f7e68]: 契约者
+      - generic [ref=f7e69]: 未命名
+    - generic [ref=f7e70]:
+      - generic [ref=f7e71]: 状态
+      - generic [ref=f7e72]: 受伤
+  - generic [ref=f7e75]:
+    - generic [ref=f7e76] [cursor=pointer]: ╳
+    - generic [ref=f7e77]:
+      - generic [ref=f7e78]:
+        - generic [ref=f7e79] [cursor=pointer]:
+          - text: 契约者档案
+          - generic [ref=f7e80]: ▼
+        - generic [ref=f7e81]:
+          - generic [ref=f7e82]:
+            - generic [ref=f7e83]: 姓名
+            - generic [ref=f7e84]: 未命名
+          - generic [ref=f7e85]:
+            - generic [ref=f7e86]: 等级
+            - generic [ref=f7e87]: Lv.3
+          - generic [ref=f7e88]:
+            - generic [ref=f7e89]: EXP
+            - generic [ref=f7e90]: 35 / 150
+          - generic [ref=f7e91]:
+            - generic [ref=f7e92]: 阶位
+            - generic [ref=f7e93]: 一阶
+          - generic [ref=f7e94]:
+            - generic [ref=f7e95]: 军衔
+            - generic [ref=f7e96]: 上士
+          - generic [ref=f7e97]:
+            - generic [ref=f7e98]: RP
+            - generic [ref=f7e99]: 12 / 15
+          - generic [ref=f7e100]:
+            - generic [ref=f7e101]: CR
+            - generic [ref=f7e102]: "4.2"
+          - generic [ref=f7e103]:
+            - generic [ref=f7e104]: 回廊态度
+            - generic [ref=f7e105]: 关注
+      - generic [ref=f7e106]:
+        - generic [ref=f7e107] [cursor=pointer]:
+          - text: 属性
+          - generic [ref=f7e108]: ▼
+        - generic [ref=f7e109]:
+          - generic [ref=f7e110]:
+            - generic [ref=f7e111]: STR
+            - generic [ref=f7e112]: 基础8 + 加成3 = 11
+          - generic [ref=f7e113]:
+            - generic [ref=f7e114]: AGI
+            - generic [ref=f7e115]: 基础6 + 加成0 = 6
+          - generic [ref=f7e116]:
+            - generic [ref=f7e117]: CON
+            - generic [ref=f7e118]: 基础12 + 加成6 = 18
+          - generic [ref=f7e119]:
+            - generic [ref=f7e120]: PER
+            - generic [ref=f7e121]: 基础9 + 加成0 = 9
+          - generic [ref=f7e122]:
+            - generic [ref=f7e123]: 未分配
+            - generic [ref=f7e124]: "2"
+      - generic [ref=f7e125]:
+        - generic [ref=f7e126] [cursor=pointer]:
+          - text: 衍生属性
+          - generic [ref=f7e127]: ▼
+        - generic [ref=f7e128]:
+          - generic [ref=f7e129]:
+            - generic [ref=f7e130]: HP
+            - generic [ref=f7e131]: 218 / 270
+          - generic [ref=f7e132]:
+            - generic [ref=f7e133]: MP
+            - generic [ref=f7e134]: 90 / 90
+          - generic [ref=f7e135]:
+            - generic [ref=f7e136]: 耐力
+            - generic [ref=f7e137]: 155 / 180
+          - generic [ref=f7e138]:
+            - generic [ref=f7e139]: 防御
+            - generic [ref=f7e140]: "12"
+          - generic [ref=f7e141]:
+            - generic [ref=f7e142]: 闪避
+            - generic [ref=f7e143]: "11"
+          - generic [ref=f7e144]:
+            - generic [ref=f7e145]: 负重
+            - generic [ref=f7e146]: 18 / 55kg
+      - generic [ref=f7e147]:
+        - generic [ref=f7e148] [cursor=pointer]:
+          - text: 天赋
+          - generic [ref=f7e149]: ▼
+        - generic [ref=f7e150]:
+          - generic [ref=f7e151]:
+            - generic [ref=f7e152]: 名称
+            - generic [ref=f7e153]: 钢铁意志
+          - generic [ref=f7e154]:
+            - generic [ref=f7e155]: 品质
+            - generic [ref=f7e156]: 蓝
+          - generic [ref=f7e157]:
+            - generic [ref=f7e158]: 加成
+            - generic [ref=f7e159]: CON +3
+      - generic [ref=f7e160]:
+        - generic [ref=f7e161] [cursor=pointer]:
+          - text: "状态: 疲惫"
+          - generic [ref=f7e162]: ▼
+        - generic [ref=f7e163]: 连续作战8h，全属性判定-1

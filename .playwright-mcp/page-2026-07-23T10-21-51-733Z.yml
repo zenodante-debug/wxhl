@@ -1,0 +1,51 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e9]:
+    - generic [ref=f7e10]:
+      - generic [ref=f7e12] [cursor=pointer]:
+        - generic [ref=f7e13]: 契 约 者 档 案
+        - generic [ref=f7e14]: 未命名
+      - generic [ref=f7e16] [cursor=pointer]:
+        - generic [ref=f7e17]: 小 队 名 册
+        - generic [ref=f7e18]: 无
+      - generic [ref=f7e20] [cursor=pointer]:
+        - generic [ref=f7e21]: 职 业 路 线
+        - generic [ref=f7e22]: 前线突击兵
+      - generic: NO RETURN
+      - generic: 契约即枷锁
+    - generic [ref=f7e23]:
+      - generic [ref=f7e25] [cursor=pointer]:
+        - generic [ref=f7e26]: 副 本 情 报
+        - generic [ref=f7e27]: 无活跃副本
+      - generic [ref=f7e29] [cursor=pointer]:
+        - generic [ref=f7e30]: 敌 情 警 戒
+        - generic [ref=f7e31]: 安全
+      - generic [ref=f7e34] [cursor=pointer]:
+        - generic [ref=f7e35]: 回 廊 地 图
+        - generic [ref=f7e36]: 15 处设施
+    - generic [ref=f7e37]:
+      - generic [ref=f7e38] [cursor=pointer]:
+        - generic [ref=f7e39]: ▣
+        - generic [ref=f7e40]: 背包
+        - generic [ref=f7e41]: 4件
+      - generic [ref=f7e42] [cursor=pointer]:
+        - generic [ref=f7e43]: ◉
+        - generic [ref=f7e44]: 通讯器
+    - generic [ref=f7e47] [cursor=pointer]:
+      - generic [ref=f7e49]: ◆ ENTER ◆
+      - generic [ref=f7e50]: 当前无活跃副本
+  - generic [ref=f7e51]:
+    - generic [ref=f7e52]:
+      - generic [ref=f7e53]: HP
+      - generic [ref=f7e56]: 218/270
+    - generic [ref=f7e57]:
+      - generic [ref=f7e58]: MP
+      - generic [ref=f7e61]: 90/90
+    - generic [ref=f7e62]:
+      - generic [ref=f7e63]: 耐力
+      - generic [ref=f7e66]: 155/180
+    - generic [ref=f7e67]:
+      - generic [ref=f7e68]: 契约者
+      - generic [ref=f7e69]: 未命名
+    - generic [ref=f7e70]:
+      - generic [ref=f7e71]: 状态
+      - generic [ref=f7e72]: 受伤

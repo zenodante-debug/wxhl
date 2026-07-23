@@ -1,753 +1,596 @@
 /* ============================================================
-   无限回廊 v5.0 — 回廊本身即界面
-   美学：P.T.里世界 × 工业锈蚀 × 应急灯光 × 凝血印记
+   无限回廊 v6.0 — 里世界长廊
+   美学：铁锈 · 凝血 · 血肉 · 向深处消失的长廊
    ============================================================ */
 
-/* -------- Fonts -------- */
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Noto+Sans+SC:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
-/* -------- Design Tokens -------- */
 :root {
-  --bg-abyss: #0a0806;
-  --bg-wall: #16120e;
-  --bg-wall-light: #1e1a15;
-  --rust: #8b4513;
-  --rust-light: #a0522d;
-  --rust-dark: #5c2d0e;
-  --blood: #5c1818;
-  --blood-bright: #8b2e2e;
-  --blood-dry: #3d1010;
-  --amber-light: #e8d5b0;
-  --amber-dim: #b8a080;
-  --chalk: #d0c8b8;
-  --chalk-dim: #908878;
-  --warning-yellow: #b8a030;
-  --warning-black: #1a1810;
-  --emergency-white: #f0e8d8;
-  --pipe-gray: #2a2520;
-  --pipe-dark: #1a1815;
-  --iron: #3a3530;
-  --iron-dark: #252220;
-  --copper-green: #5a7060;
+  --bg-void: #060403;
+  --rust-dark: #1a0a05;
+  --rust: #2a1008;
+  --rust-mid: #3d1a0c;
+  --rust-light: #5a2812;
+  --blood-dry: #2a0808;
+  --blood: #4a1010;
+  --blood-bright: #7a1818;
+  --blood-wet: #a02020;
+  --flesh-base: #1a0c08;
+  --flesh-light: #2a1510;
+  --flesh-highlight: #3d1c12;
+  --iron: #2a2420;
+  --iron-dark: #1a1815;
+  --amber: #c8a060;
+  --amber-dim: #806840;
+  --chalk: #b8a898;
+  --chalk-dim: #706050;
+  --warning: #706050;
+  --emerge: #d8c8b0;
 
-  --font-display: 'Special Elite', 'Noto Sans SC', serif;
+  --font-display: 'Noto Serif SC', 'SimSun', serif;
   --font-body: 'Noto Sans SC', 'PingFang SC', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-
-  --dur-fast: 0.15s;
-  --dur-normal: 0.3s;
-  --dur-slow: 0.6s;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* -------- Reset -------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; height: 100%; overflow: hidden; }
 body {
   font-family: var(--font-body);
-  background: var(--bg-abyss);
+  background: var(--bg-void);
   color: var(--chalk);
   height: 100vh; width: 100vw;
   overflow: hidden;
-  user-select: none;
   cursor: crosshair;
 }
 
-/* ============================================================
-   CEILING — 天花板
-   ============================================================ */
-#ceiling {
-  position: fixed; top: 0; left: 0; right: 0; height: 48px;
-  background: linear-gradient(180deg, var(--bg-abyss) 0%, var(--pipe-dark) 50%, var(--pipe-gray) 100%);
-  border-bottom: 2px solid var(--iron-dark);
+/* ============ Ember Canvas ============ */
+#ember-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* ============ CEILING ============ */
+#ceiling-slab {
+  position: fixed; top: 0; left: 0; right: 0; height: 44px;
+  background: linear-gradient(180deg, #050302 0%, #0a0705 60%, #120c08 100%);
   z-index: 100;
-  display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid var(--iron-dark);
+  display: flex; align-items: flex-end; justify-content: center;
   overflow: hidden;
 }
-#ceiling::before {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,0,0,0.3) 60px, rgba(0,0,0,0.3) 62px);
+#ceiling-slab::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(100,60,30,0.3) 20%, rgba(100,60,30,0.4) 50%, rgba(100,60,30,0.3) 80%, transparent);
 }
-/* 管道 */
-.pipe {
-  position: absolute; top: 0; bottom: 0; width: 24px;
-  background: linear-gradient(90deg, var(--pipe-dark), var(--pipe-gray), var(--pipe-dark));
-  border-radius: 0 0 4px 4px;
+#ceiling-pipes {
+  position: absolute; inset: 0; display: flex; justify-content: space-around; align-items: flex-start;
+  padding: 0 80px;
 }
-.pipe-left { left: 60px; }
-.pipe-right { right: 60px; }
-.pipe-drip {
-  position: absolute; bottom: -4px; width: 3px; height: 8px;
-  background: var(--copper-green);
-  border-radius: 0 0 2px 2px;
-  animation: drip 4s ease-in-out infinite;
-  opacity: 0.6;
+.pipe-run {
+  width: 14px; height: 100%;
+  background: linear-gradient(90deg, #1a1612, #252018, #1a1612);
+  border-radius: 0 0 3px 3px;
+  position: relative;
 }
-.drip-left { left: 70px; animation-delay: 0s; }
-.drip-right { right: 70px; animation-delay: 1.5s; }
-@keyframes drip {
-  0%, 90%, 100% { transform: scaleY(1); opacity: 0.6; }
-  95% { transform: scaleY(3); opacity: 1; }
+.pipe-run::after {
+  content: ''; position: absolute; bottom: -3px; left: 50%;
+  width: 2px; height: 6px;
+  background: rgba(80,100,70,0.6);
+  border-radius: 1px;
+  animation: pipeDrip 5s ease-in-out infinite;
+}
+.pipe-run.delay::after { animation-delay: 2s; }
+@keyframes pipeDrip {
+  0%, 85%, 100% { transform: scaleY(1); opacity: 0.5; }
+  90% { transform: scaleY(4); opacity: 1; }
 }
 
-/* 应急灯 */
-#emergency-light {
-  position: absolute; top: 2px; left: 50%; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; z-index: 2;
+/* Hanging light */
+#hanging-light {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
 }
-.light-bulb {
-  width: 32px; height: 18px; background: var(--amber-light);
-  border-radius: 2px 2px 0 0;
-  box-shadow: 0 0 30px rgba(232, 213, 176, 0.6), 0 0 60px rgba(232, 213, 176, 0.3);
-  animation: bulbFlicker 8s ease-in-out infinite;
+.bulb-wire {
+  width: 1px; height: 8px; background: var(--iron);
 }
-@keyframes bulbFlicker {
-  0%, 30%, 32%, 34%, 36%, 100% { opacity: 1; box-shadow: 0 0 30px rgba(232,213,176,0.6), 0 0 60px rgba(232,213,176,0.3); }
-  31%, 33%, 35% { opacity: 0.3; box-shadow: 0 0 5px rgba(232,213,176,0.2), 0 0 10px rgba(232,213,176,0.1); }
+.bulb-glass {
+  width: 24px; height: 14px;
+  background: radial-gradient(ellipse at 50% 30%, rgba(210,180,140,0.9), rgba(180,140,100,0.4));
+  border-radius: 50% / 40%;
+  box-shadow: 0 0 40px rgba(200,160,100,0.5), 0 0 80px rgba(200,150,80,0.25);
+  animation: bulbFlick 7s ease-in-out infinite;
 }
-.light-cone {
-  width: 0; height: 0;
-  border-left: 120px solid transparent;
-  border-right: 120px solid transparent;
-  border-top: 400px solid rgba(232, 213, 176, 0.04);
-  position: absolute; top: 18px;
-}
-#ceiling-notify {
-  position: absolute; bottom: 3px; font-family: var(--font-display);
-  font-size: 0.6rem; letter-spacing: 2px;
-  color: var(--copper-green); opacity: 0.7;
-  animation: notifyPulse 3s ease-in-out infinite;
-}
-@keyframes notifyPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+@keyframes bulbFlick {
+  0%, 25%, 27%, 29%, 31%, 100% { opacity: 1; }
+  26%, 28%, 30% { opacity: 0.2; }
 }
 
 /* ============================================================
-   CORRIDOR — 3D 透视回廊
+   CORRIDOR SCENE — 3D 透视长廊
    ============================================================ */
-#corridor {
+#corridor-scene {
   position: fixed;
-  top: 48px; bottom: 0; left: 0; right: 0;
-  perspective: 1400px;
-  perspective-origin: 50% 45%;
+  top: 44px; bottom: 52px; left: 0; right: 0;
+  perspective: 900px;
+  perspective-origin: 50% 50%;
   overflow: hidden;
 }
 
-/* 消失线 */
-.perspective-lines { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-.vanish-line {
-  position: absolute; background: rgba(60, 50, 40, 0.4);
+/* ---------- WALLS ---------- */
+.corridor-wall {
+  position: absolute; top: 0; bottom: 0;
+  width: 36%;
+  overflow: hidden;
 }
-.vl-top-left {
-  top: 0; left: 0; width: 38%; height: 1px;
-  transform-origin: left center;
-  transform: rotate(12deg);
+#wall-left {
+  left: 0;
+  background:
+    radial-gradient(ellipse at 100% 20%, var(--flesh-light) 0%, transparent 35%),
+    radial-gradient(ellipse at 90% 60%, rgba(80,20,8,0.4) 0%, transparent 40%),
+    radial-gradient(ellipse at 100% 85%, rgba(40,10,5,0.5) 0%, transparent 30%),
+    linear-gradient(90deg, var(--rust-dark) 0%, var(--rust) 50%, var(--rust-mid) 100%);
+  clip-path: polygon(0 0, 100% 5%, 100% 95%, 0 100%);
+  border-right: 1px solid rgba(120,40,20,0.2);
 }
-.vl-top-right {
-  top: 0; right: 0; width: 38%; height: 1px;
-  transform-origin: right center;
-  transform: rotate(-12deg);
+#wall-right {
+  right: 0;
+  background:
+    radial-gradient(ellipse at 0% 30%, var(--flesh-light) 0%, transparent 35%),
+    radial-gradient(ellipse at 10% 50%, rgba(80,20,8,0.4) 0%, transparent 40%),
+    radial-gradient(ellipse at 0% 75%, rgba(40,10,5,0.5) 0%, transparent 30%),
+    linear-gradient(270deg, var(--rust-dark) 0%, var(--rust) 50%, var(--rust-mid) 100%);
+  clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 95%);
+  border-left: 1px solid rgba(120,40,20,0.2);
 }
-.vl-bottom-left {
-  bottom: 0; left: 0; width: 38%; height: 1px;
-  transform-origin: left center;
-  transform: rotate(-8deg);
+
+/* ---------- FLESH VEINS ---------- */
+.flesh-veins {
+  position: absolute; inset: 0; opacity: 0.5; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 80% 15%, rgba(60,15,10,0.6) 0%, transparent 25%),
+    radial-gradient(ellipse at 75% 45%, rgba(40,10,8,0.4) 0%, transparent 20%),
+    radial-gradient(ellipse at 85% 70%, rgba(50,12,8,0.5) 0%, transparent 22%),
+    radial-gradient(ellipse at 70% 90%, rgba(35,8,5,0.35) 0%, transparent 18%);
+  animation: fleshPulse 8s ease-in-out infinite;
 }
-.vl-bottom-right {
-  bottom: 0; right: 0; width: 38%; height: 1px;
-  transform-origin: right center;
-  transform: rotate(8deg);
+.flesh-veins.right {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(60,15,10,0.6) 0%, transparent 25%),
+    radial-gradient(ellipse at 25% 55%, rgba(40,10,8,0.4) 0%, transparent 20%),
+    radial-gradient(ellipse at 15% 65%, rgba(50,12,8,0.5) 0%, transparent 22%),
+    radial-gradient(ellipse at 30% 85%, rgba(35,8,5,0.35) 0%, transparent 18%);
+}
+@keyframes fleshPulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.6; }
+}
+
+/* ---------- RUST PATCHES ---------- */
+.rust-patches {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 60% 30%, rgba(120,50,20,0.3) 0%, transparent 30%),
+    radial-gradient(circle at 80% 60%, rgba(100,40,15,0.25) 0%, transparent 25%),
+    radial-gradient(circle at 50% 80%, rgba(90,35,10,0.2) 0%, transparent 20%);
+}
+.rust-patches.right {
+  background:
+    radial-gradient(circle at 40% 25%, rgba(120,50,20,0.3) 0%, transparent 30%),
+    radial-gradient(circle at 20% 55%, rgba(100,40,15,0.25) 0%, transparent 25%),
+    radial-gradient(circle at 45% 75%, rgba(90,35,10,0.2) 0%, transparent 20%);
+}
+
+/* ---------- BLOOD STREAKS ---------- */
+.blood-streak {
+  position: absolute; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(120,15,10,0.3) 20%, rgba(80,8,5,0.5) 60%, rgba(50,5,3,0.2) 100%);
+}
+.s1 { right: 12%; top: 8%; width: 3px; height: 40%; }
+.s2 { right: 25%; top: 35%; width: 2px; height: 30%; }
+.s3 { left: 18%; top: 15%; width: 4px; height: 35%; }
+
+/* ---------- WALL SCRATCHES ---------- */
+.wall-scratch {
+  position: absolute; pointer-events: none;
+  font-family: var(--font-display); color: rgba(180,140,120,0.25);
+  font-size: 0.65rem; letter-spacing: 3px;
+  transform: rotate(-2deg);
+}
+.scratch-l1 { left: 10%; top: 15%; }
+.scratch-l2 { left: 8%; bottom: 25%; font-size: 0.72rem; color: rgba(180,140,120,0.2); transform: rotate(1deg); }
+
+/* ---------- WALL HANDPRINTS ---------- */
+.wall-handprint {
+  position: absolute; pointer-events: none;
+  width: 30px; height: 36px;
+  border-radius: 40% 40% 35% 35%;
+  background: rgba(100,15,8,0.25);
+  box-shadow: 0 0 8px rgba(80,10,5,0.2);
+  transform: rotate(-15deg);
+}
+.hp1 { right: 15%; top: 55%; }
+.hp2 { left: 10%; top: 48%; transform: rotate(10deg); opacity: 0.6; }
+
+/* ============================================================
+   DOORWAYS — 两侧门洞
+   ============================================================ */
+.doorway {
+  position: absolute;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
+}
+.doorway:hover { filter: brightness(1.3); z-index: 10; }
+.doorway:hover .door-recess { border-color: var(--blood-bright); box-shadow: 0 0 20px rgba(160,30,20,0.3); }
+.doorway:hover .door-plate { color: var(--emerge); }
+
+/* Left wall doors — positioned progressively deeper */
+.dl-1 { left: 18%; top: 11%; width: 29%; height: 26%; }        /* nearest */
+.dl-2 { left: 16%; top: 42%; width: 24%; height: 22%; }        /* mid */
+.dl-3 { left: 14%; top: 72%; width: 18%; height: 17%; }        /* far */
+
+/* Right wall doors */
+.dr-1 { right: 18%; top: 10%; width: 29%; height: 26%; }
+.dr-2 { right: 16%; top: 40%; width: 24%; height: 22%; }
+.dr-3 { right: 14%; top: 70%; width: 18%; height: 17%; }
+
+.door-recess {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, rgba(8,4,3,0.95), rgba(15,8,6,0.9));
+  border: 2px solid var(--iron-dark);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px;
+  transition: all 0.4s;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+  position: relative; overflow: hidden;
+}
+.door-recess::after {
+  content: ''; position: absolute; inset: 3px; pointer-events: none;
+  border: 1px solid rgba(100,50,20,0.15);
+}
+.door-plate {
+  font-family: var(--font-display); font-size: clamp(0.55rem, 1.2vw, 0.78rem);
+  letter-spacing: 3px; color: var(--amber-dim);
+  text-transform: uppercase; text-align: center;
+  transition: color 0.4s;
+}
+.door-status {
+  font-family: var(--font-mono); font-size: clamp(0.45rem, 0.9vw, 0.6rem);
+  letter-spacing: 1.5px; color: var(--blood-bright);
+  text-align: center;
+}
+.door-status.dim { color: var(--chalk-dim); }
+.door-status.danger { color: var(--blood-wet); animation: dangerPulse 2s ease-in-out infinite; }
+@keyframes dangerPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; text-shadow: 0 0 6px var(--blood); }
+}
+
+.door-bloodstain {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 25%;
+  background: linear-gradient(0deg, rgba(100,15,8,0.4) 0%, transparent 100%);
+  pointer-events: none;
+}
+.door-crack {
+  position: absolute; top: 30%; right: 8%; width: 2px; height: 40%;
+  background: rgba(10,5,3,0.8);
+  pointer-events: none;
+  transform: rotate(5deg);
+}
+.door-alert-light {
+  position: absolute; top: 8px; right: 8px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--blood-bright);
+  box-shadow: 0 0 6px var(--blood);
+  animation: dangerPulse 1.5s ease-in-out infinite;
 }
 
 /* ============================================================
-   FAR DOOR — 走廊尽头之门
+   FLOOR
    ============================================================ */
-#far-door {
-  position: absolute;
-  top: 15%; left: 50%; transform: translate(-50%, 0);
-  width: 200px; height: 320px;
-  z-index: 2;
-  display: flex; align-items: center; justify-content: center;
+#floor-plain {
+  position: absolute; bottom: 0; left: 14%; right: 14%; height: 22%;
+  background:
+    linear-gradient(0deg, rgba(10,6,4,0.9) 0%, rgba(20,12,8,0.7) 40%, rgba(25,15,10,0.3) 70%, transparent 100%);
+  clip-path: polygon(0 30%, 100% 30%, 100% 100%, 0 100%);
+  overflow: hidden;
 }
-.door-frame {
-  width: 160px; height: 280px;
-  border: 4px solid var(--iron-dark);
-  background: linear-gradient(180deg, rgba(20,15,10,0.95), rgba(10,8,5,0.98));
+
+/* Converging floor lines */
+.floor-grid-lines {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.floor-grid-lines::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    /* Horizontal lines — closer together near the vanishing point */
+    repeating-linear-gradient(0deg,
+      transparent, transparent 8px,
+      rgba(60,30,20,0.12) 8px, rgba(60,30,20,0.12) 9px
+    );
+}
+.floor-grid-lines::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    /* Radial lines converging to center */
+    conic-gradient(
+      from 0deg at 50% -60%,
+      transparent 0deg, transparent 0.5deg,
+      rgba(60,30,20,0.15) 0.5deg, transparent 1deg,
+      transparent 5deg, transparent 5.5deg,
+      rgba(60,30,20,0.15) 5.5deg, transparent 6deg,
+      transparent 10deg, transparent 10.5deg,
+      rgba(60,30,20,0.15) 10.5deg, transparent 11deg,
+      transparent 15deg, transparent 15.5deg,
+      rgba(60,30,20,0.15) 15.5deg, transparent 16deg,
+      /* left side lines */
+      transparent 175deg, transparent 175.5deg,
+      rgba(60,30,20,0.15) 175.5deg, transparent 176deg,
+      transparent 170deg, transparent 170.5deg,
+      rgba(60,30,20,0.15) 170.5deg, transparent 171deg,
+      transparent 165deg, transparent 165.5deg,
+      rgba(60,30,20,0.15) 165.5deg, transparent 166deg,
+      /* right side lines */
+      transparent 185deg, transparent 185.5deg,
+      rgba(60,30,20,0.15) 185.5deg, transparent 186deg,
+      transparent 190deg, transparent 190.5deg,
+      rgba(60,30,20,0.15) 190.5deg, transparent 191deg,
+      transparent 195deg, transparent 195.5deg,
+      rgba(60,30,20,0.15) 195.5deg, transparent 196deg
+    );
+}
+
+.floor-blood-pool {
+  position: absolute; left: 55%; top: 40%;
+  width: 60px; height: 36px;
+  background: radial-gradient(ellipse at center, rgba(80,10,5,0.35) 0%, rgba(60,8,3,0.15) 50%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.floor-crack {
+  position: absolute; left: 40%; top: 20%;
+  width: 80px; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(10,5,3,0.6) 30%, rgba(10,5,3,0.4) 70%, transparent);
+  pointer-events: none;
+  transform: rotate(-4deg);
+}
+
+/* Floor items */
+.floor-item {
+  position: absolute; bottom: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; transition: all 0.3s;
+  font-family: var(--font-display);
+  z-index: 10;
+}
+.floor-item:hover { transform: translateY(-4px); filter: brightness(1.3); }
+.fi-icon { font-size: 1rem; color: var(--amber-dim); }
+.fi-label { font-size: 0.52rem; letter-spacing: 1.5px; color: var(--chalk-dim); }
+.fi-count { font-size: 0.48rem; color: var(--amber-dim); }
+.fi-1 { left: 18%; }
+.fi-2 { right: 18%; }
+
+/* Footprints */
+.footprint {
+  position: absolute; bottom: 12px;
+  width: 20px; height: 8px;
+  background: rgba(80,50,30,0.2);
+  border-radius: 40%;
+  pointer-events: none;
+}
+.fp1 { left: 35%; transform: rotate(-5deg); }
+.fp2 { left: 44%; transform: rotate(3deg); opacity: 0.6; }
+
+/* ============================================================
+   FAR END — 走廊尽头 · 副本之门
+   ============================================================ */
+#far-end {
+  position: absolute;
+  top: 18%; bottom: 24%; left: 33%; right: 33%;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
+}
+
+#portal-door {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+#portal-door:hover { filter: brightness(1.2); }
+#portal-door:hover .portal-glow { opacity: 0.7; }
+
+.portal-frame {
+  width: 70%; height: 90%;
+  border: 3px solid var(--iron-dark);
+  background: linear-gradient(180deg, rgba(5,3,2,0.98), rgba(10,5,4,0.95));
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 12px;
   position: relative;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4);
 }
-.door-frame::before {
-  content: ''; position: absolute; inset: -6px;
-  border: 1px solid var(--iron);
-  pointer-events: none;
-}
-.door-label {
-  font-family: var(--font-mono); font-size: 0.65rem;
-  letter-spacing: 3px; color: var(--iron);
-}
-#door-number { color: var(--amber-dim); }
-.door-placard {
-  font-family: var(--font-display); font-size: 0.75rem;
-  letter-spacing: 1.5px; color: var(--chalk-dim);
-  text-align: center; line-height: 1.6;
-  max-width: 120px;
-}
-.door-light {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--blood); box-shadow: 0 0 8px var(--blood);
-  animation: doorLightPulse 2s ease-in-out infinite;
-}
-.door-light.active { background: #3a8; box-shadow: 0 0 10px #3a8; }
-@keyframes doorLightPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-.door-handle {
-  width: 20px; height: 6px; background: var(--iron);
-  border-radius: 2px;
-  position: absolute; right: 10px; top: 50%;
-}
-.door-glow {
-  position: absolute; inset: -40px;
-  background: radial-gradient(ellipse at center, rgba(200,120,40,0.08) 0%, transparent 60%);
+.portal-frame::before {
+  content: ''; position: absolute; inset: -5px;
+  border: 1px solid rgba(100,40,20,0.3);
   pointer-events: none;
 }
 
-/* ============================================================
-   WALLS
-   ============================================================ */
-.wall {
-  position: absolute; top: 5%; bottom: 15%;
-  width: 28%;
-  display: flex; flex-direction: column;
-  gap: 12px; padding: 16px 12px;
-  overflow-y: auto; overflow-x: hidden;
-  z-index: 5;
+.portal-glow {
+  position: absolute; inset: -30px;
+  background: radial-gradient(ellipse at center, rgba(180,60,20,0.15) 0%, rgba(120,30,10,0.05) 40%, transparent 70%);
+  pointer-events: none;
+  transition: opacity 0.5s;
+  animation: portalBreathe 4s ease-in-out infinite;
 }
-#left-wall {
-  left: 2%;
-  background:
-    radial-gradient(ellipse at 100% 50%, rgba(30,20,15,0.4) 0%, transparent 70%),
-    linear-gradient(90deg, rgba(20,16,12,0.7), rgba(25,20,15,0.5));
-  border-right: 1px solid rgba(80,50,30,0.2);
-  transform: rotateY(6deg);
-  transform-origin: right center;
-}
-#right-wall {
-  right: 2%;
-  background:
-    radial-gradient(ellipse at 0% 50%, rgba(30,20,15,0.4) 0%, transparent 70%),
-    linear-gradient(270deg, rgba(20,16,12,0.7), rgba(25,20,15,0.5));
-  border-left: 1px solid rgba(80,50,30,0.2);
-  transform: rotateY(-6deg);
-  transform-origin: left center;
-}
-/* 墙壁纹理叠加 */
-.wall::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(139,69,19,0.04) 0%, transparent 30%),
-    radial-gradient(circle at 70% 60%, rgba(100,30,10,0.03) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(60,40,20,0.05) 0%, transparent 20%);
+@keyframes portalBreathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
 }
 
-/* ============================================================
-   WALL POSTERS — 墙上海报/表格
-   ============================================================ */
-.wall-poster {
-  background: linear-gradient(180deg, #1e1a14, #181410);
-  border: 1px solid var(--iron-dark);
-  padding: 12px 14px;
-  position: relative; z-index: 1;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
-  transition: all var(--dur-normal);
-  cursor: pointer;
+.portal-surface {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,80,30,0.4) 0%, rgba(150,40,15,0.2) 40%, transparent 70%);
+  box-shadow: 0 0 30px rgba(200,80,30,0.3), 0 0 60px rgba(180,60,20,0.15);
+  animation: portalOrb 3s ease-in-out infinite;
 }
-.wall-poster::after {
-  content: ''; position: absolute; bottom: 0; right: 0;
-  width: 30px; height: 20px;
-  background: linear-gradient(135deg, transparent 50%, rgba(139,69,19,0.1) 50%);
-}
-.wall-poster:hover {
-  border-color: var(--rust);
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.5), 0 0 20px rgba(200,120,40,0.1);
-  transform: translate(-1px, -1px);
-}
-.poster-header {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin-bottom: 10px; padding-bottom: 8px;
-  border-bottom: 1px solid rgba(100,60,30,0.3);
-}
-.poster-pin { color: var(--rust); font-size: 0.6rem; }
-.poster-title {
-  font-family: var(--font-display); font-size: 0.78rem;
-  letter-spacing: 2px; color: var(--amber-light);
-  text-transform: uppercase;
-}
-.poster-body { display: flex; flex-direction: column; gap: 3px; }
-.poster-row {
-  display: flex; justify-content: space-between; align-items: baseline;
-  font-size: 0.72rem; padding: 2px 0;
-  border-bottom: 1px dotted rgba(80,50,30,0.2);
-}
-.poster-row span:first-child { color: var(--chalk-dim); font-size: 0.65rem; letter-spacing: 1px; }
-.poster-row span:last-child { color: var(--amber-light); font-weight: 700; }
-
-/* ============================================================
-   WALL MARKINGS — 墙上粉笔标记
-   ============================================================ */
-.wall-markings {
-  position: relative; z-index: 1;
-  padding: 10px 12px;
-  font-family: var(--font-display);
-}
-.mark-row {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
-}
-.mark-label {
-  color: var(--chalk-dim); font-size: 0.65rem; width: 28px;
-  letter-spacing: 1px; text-align: right;
-}
-.mark-val {
-  color: var(--amber-light); font-size: 0.85rem; font-weight: 700;
-  width: 28px; text-align: center;
-}
-.mark-bar {
-  flex: 1; height: 3px; background: rgba(60,50,40,0.5);
-  border-radius: 1px; overflow: hidden;
-}
-.mark-fill { height: 100%; border-radius: 1px; transition: width 0.5s; }
-.mark-fill.str { background: var(--blood-bright); }
-.mark-fill.agi { background: var(--copper-green); }
-.mark-fill.con { background: var(--rust-light); }
-.mark-fill.per { background: var(--amber-dim); }
-
-/* ============================================================
-   WALL GAUGES — 墙上仪表盘
-   ============================================================ */
-.wall-gauge {
-  position: relative; z-index: 1; display: flex; align-items: center; gap: 8px;
-  padding: 4px 10px;
-  background: rgba(10,8,6,0.4);
-  border-left: 3px solid var(--iron-dark);
-}
-.gauge-label {
-  font-family: var(--font-display); font-size: 0.65rem;
-  letter-spacing: 2px; color: var(--chalk-dim); width: 28px;
-}
-.gauge-track {
-  flex: 1; height: 8px; background: rgba(20,15,10,0.8);
-  border: 1px solid var(--iron-dark); position: relative; overflow: hidden;
-}
-.gauge-fill { height: 100%; transition: width 0.6s; }
-.hp-fill { background: linear-gradient(90deg, var(--blood-dry), var(--blood-bright)); }
-.mp-fill { background: linear-gradient(90deg, #3a5050, var(--copper-green)); }
-.sp-fill { background: linear-gradient(90deg, var(--rust-dark), var(--rust-light)); }
-.gauge-num {
-  font-family: var(--font-mono); font-size: 0.68rem;
-  color: var(--amber-light); width: 60px; text-align: right;
+@keyframes portalOrb {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
 
-/* ============================================================
-   WALL WARNING — 工业警示标志
-   ============================================================ */
-.wall-warning {
-  position: relative; z-index: 1;
-  padding: 8px 10px;
-  display: flex; align-items: center; gap: 8px;
-  overflow: hidden;
-  font-family: var(--font-display);
-  cursor: pointer; transition: all var(--dur-fast);
+.portal-label {
+  font-family: var(--font-display); font-size: clamp(0.6rem, 1.3vw, 0.85rem);
+  letter-spacing: 6px; color: var(--amber);
+  text-shadow: 0 0 10px rgba(200,150,80,0.3);
 }
-.wall-warning:hover { filter: brightness(1.2); }
-.warn-stripes {
-  position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--warning-black), var(--warning-black) 6px,
-    var(--warning-yellow) 6px, var(--warning-yellow) 12px
+.portal-name {
+  font-family: var(--font-mono); font-size: clamp(0.45rem, 0.8vw, 0.6rem);
+  letter-spacing: 2px; color: var(--chalk-dim);
+  text-align: center;
+  max-width: 80%;
+}
+.portal-light-rays {
+  position: absolute; pointer-events: none;
+  width: 200%; height: 200%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(200,100,30,0.05) 2deg,
+    transparent 4deg,
+    transparent 10deg,
+    rgba(200,100,30,0.04) 12deg,
+    transparent 14deg
   );
-  opacity: 0.3;
+  opacity: 0.5;
+  animation: raySpin 20s linear infinite;
 }
-.warn-text {
-  position: relative; z-index: 1;
-  font-size: 0.8rem; font-weight: 700; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--emergency-white);
-}
-.wall-warning.small { padding: 4px 8px; }
-.wall-warning.small .warn-text { font-size: 0.65rem; letter-spacing: 1px; }
+@keyframes raySpin { to { transform: rotate(360deg); } }
 
-/* ============================================================
-   WALL ALERT — 交战警报
-   ============================================================ */
-.wall-alert {
-  position: relative; z-index: 1;
-  padding: 10px; text-align: center;
-  border: 1px solid var(--blood);
-  background: rgba(60,10,10,0.3);
-  animation: alertPulse 3s ease-in-out infinite;
-  cursor: pointer;
-}
-@keyframes alertPulse {
-  0%, 100% { border-color: var(--blood); }
-  50% { border-color: var(--blood-bright); box-shadow: 0 0 10px rgba(139,46,46,0.3); }
-}
-.alert-header {
-  font-family: var(--font-display); font-size: 0.65rem;
-  letter-spacing: 2px; color: var(--blood-bright);
-  margin-bottom: 4px;
-}
-.alert-count {
-  font-family: var(--font-mono); font-size: 1.5rem;
-  font-weight: 700; color: var(--blood-bright);
-}
-
-/* ============================================================
-   FLOOR — 地面
-   ============================================================ */
-#floor {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 18%;
-  background: linear-gradient(0deg, var(--pipe-dark) 0%, rgba(20,16,12,0.9) 50%, transparent 100%);
-  transform: rotateX(70deg);
-  transform-origin: bottom center;
-  z-index: 3;
-}
-.floor-grid {
-  position: absolute; inset: 0;
+/* Flesh growth above portal */
+.flesh-growth {
+  position: absolute; top: -15px; left: 30%; right: 30%; height: 20px;
   background:
-    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(60,50,40,0.1) 40px, rgba(60,50,40,0.1) 41px),
-    repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(60,50,40,0.08) 60px, rgba(60,50,40,0.08) 61px);
-}
-.floor-reflections {
-  position: absolute; bottom: 5px; left: 10%; right: 10%; height: 40%;
-  background: radial-gradient(ellipse at 50% 0%, rgba(200,120,40,0.04) 0%, transparent 70%);
+    radial-gradient(ellipse at 40% 100%, rgba(80,20,10,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse at 60% 100%, rgba(60,15,8,0.4) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 /* ============================================================
-   HALLWAY CENTER — 走廊中心交互区
+   HUD BAR — 底部状态条
    ============================================================ */
-#hallway-center {
-  position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
-  z-index: 10;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
+#hud-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 52px;
+  background: linear-gradient(0deg, rgba(8,5,4,0.95) 0%, rgba(12,8,6,0.9) 60%, transparent 100%);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center; gap: 24px;
+  padding: 0 24px;
+  border-top: 1px solid rgba(60,30,20,0.2);
 }
-
-/* 墙上血字 */
-#blood-text {
-  font-family: var(--font-display);
-  font-size: 1.8rem; font-weight: 700;
-  line-height: 1.2; text-align: center;
-  color: var(--blood-bright);
-  text-shadow: 0 0 10px var(--blood), 2px 2px 0 rgba(0,0,0,0.5);
-  opacity: 0.6;
-  letter-spacing: 4px;
-  transform: skewX(-2deg);
-  transition: opacity var(--dur-normal);
+.hud-stat {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
 }
-#blood-text:hover { opacity: 1; }
-
-/* 通讯器 */
-#radio {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  cursor: pointer;
-  transition: all var(--dur-normal);
+.hud-label {
+  font-size: 0.6rem; letter-spacing: 1.5px; color: var(--chalk-dim);
+  width: 28px; text-align: right; font-family: var(--font-display);
 }
-#radio:hover { transform: scale(1.05); }
-.radio-body {
-  width: 50px; height: 36px;
-  background: linear-gradient(180deg, var(--pipe-gray), var(--pipe-dark));
-  border: 2px solid var(--iron-dark);
-  border-radius: 4px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px;
-  position: relative;
+.hud-track {
+  width: 80px; height: 4px; background: rgba(20,12,8,0.6);
+  border: 1px solid rgba(60,30,20,0.2); overflow: hidden;
+  border-radius: 1px;
 }
-.radio-speaker {
-  width: 30px; height: 3px; background: var(--iron-dark);
-  border-radius: 2px;
+.hud-fill { height: 100%; transition: width 0.6s; }
+.hud-fill.hp { background: linear-gradient(90deg, var(--blood-dry), var(--blood-bright)); }
+.hud-fill.mp { background: linear-gradient(90deg, #2a4040, #4a7060); }
+.hud-fill.sp { background: linear-gradient(90deg, var(--rust-dark), var(--rust-light)); }
+.hud-num {
+  font-size: 0.65rem; color: var(--chalk); min-width: 55px;
+  letter-spacing: 0.5px;
 }
-.radio-speaker:nth-child(2) { width: 24px; }
-.radio-dial {
-  position: absolute; right: 3px; top: 3px;
-  width: 8px; height: 8px; border-radius: 50%;
-  border: 1px solid var(--iron);
-}
-.radio-light {
-  width: 4px; height: 4px;
-  background: var(--copper-green); border-radius: 50%;
-  box-shadow: 0 0 5px var(--copper-green);
-  animation: radioBlink 2s ease-in-out infinite;
-}
-@keyframes radioBlink {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-.radio-label {
-  font-family: var(--font-display);
-  font-size: 0.55rem; letter-spacing: 2px;
-  color: var(--chalk-dim);
-}
-
-/* 按钮面板 */
-#wall-panel {
-  display: flex; gap: 6px;
-  background: var(--pipe-dark);
-  border: 2px solid var(--iron-dark);
-  padding: 6px 8px;
-  border-radius: 2px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-.panel-btn {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 6px 8px;
-  background: transparent; border: 1px solid transparent;
-  color: var(--chalk-dim);
-  font-family: var(--font-body); font-size: 0.6rem;
-  cursor: pointer;
-  transition: all var(--dur-fast);
-  border-radius: 1px; letter-spacing: 1px;
-}
-.panel-btn:hover {
-  border-color: var(--iron);
-  color: var(--amber-light);
-  background: rgba(100,60,30,0.1);
-}
-.panel-btn:active { transform: scale(0.95); }
-.panel-btn.active {
-  border-color: var(--rust);
-  color: var(--amber-light);
-  background: rgba(139,69,19,0.15);
-  box-shadow: 0 0 8px rgba(200,120,40,0.15);
-}
-.btn-icon { font-size: 1rem; }
-.btn-label { font-size: 0.55rem; }
+.hud-num.danger { color: var(--blood-wet); }
+.hud-name { margin-left: auto; }
+.hud-name .hud-num { font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 2px; color: var(--amber); }
 
 /* ============================================================
-   DETAIL OVERLAY — 详情面板
+   DETAIL OVERLAY
    ============================================================ */
-#detail-overlay {
-  position: fixed; inset: 0; z-index: 200;
-  display: none; align-items: center; justify-content: center;
-}
-#detail-overlay.open { display: flex; }
-#detail-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(8,6,4,0.85);
-  animation: fadeIn 0.3s;
-}
-#detail-panel {
-  position: relative; z-index: 1;
-  width: 85vw; max-width: 700px; max-height: 80vh;
-  background: var(--bg-wall);
-  border: 2px solid var(--iron);
-  box-shadow: 0 0 60px rgba(0,0,0,0.7), 0 0 0 1px var(--iron-dark);
-  overflow-y: auto; padding: 24px 20px 20px;
-  animation: panelSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes panelSlideIn {
-  from { opacity: 0; transform: translateY(20px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-#detail-close {
-  position: absolute; top: 8px; right: 12px;
-  font-size: 1.2rem; color: var(--blood-bright);
-  cursor: pointer; transition: color var(--dur-fast);
-  font-family: var(--font-display);
-}
-#detail-close:hover { color: var(--amber-light); }
-
-/* 详情内的面板样式 */
-.detail-section {
-  margin-bottom: 16px;
-  border: 1px solid var(--iron-dark);
-  background: rgba(16,12,10,0.6);
-}
-.detail-section-header {
-  padding: 8px 14px; cursor: pointer;
-  background: rgba(20,16,12,0.8);
-  border-bottom: 1px solid var(--iron-dark);
-  font-family: var(--font-display); font-size: 0.78rem;
-  letter-spacing: 1.5px; color: var(--amber-light);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.detail-section-body { padding: 12px 14px; }
-.detail-section-body.hidden { display: none; }
-.detail-row {
-  display: flex; justify-content: space-between; padding: 3px 0;
-  border-bottom: 1px dotted rgba(80,50,30,0.15);
-  font-size: 0.78rem;
-}
-.detail-row:last-child { border-bottom: none; }
-.detail-row .dl { color: var(--chalk-dim); }
-.detail-row .dv { color: var(--amber-light); font-weight: 700; text-align: right; }
-.detail-tag {
-  display: inline-block; padding: 2px 8px; font-size: 0.65rem;
-  letter-spacing: 1px; font-weight: 700; margin: 1px;
-}
-.tag-rust { background: rgba(139,69,19,0.2); color: var(--rust-light); border: 1px solid rgba(139,69,19,0.3); }
-.tag-blood { background: rgba(92,24,24,0.25); color: var(--blood-bright); border: 1px solid rgba(139,46,46,0.3); }
-.tag-iron { background: rgba(58,53,48,0.2); color: var(--iron); border: 1px solid rgba(58,53,48,0.3); }
-.tag-copper { background: rgba(90,112,96,0.15); color: var(--copper-green); border: 1px solid rgba(90,112,96,0.25); }
-.tag-warn { background: rgba(184,160,48,0.15); color: var(--warning-yellow); border: 1px solid rgba(184,160,48,0.3); }
-
-.chalk-num {
-  color: var(--amber-light); font-weight: 700;
-  cursor: pointer; border-bottom: 1px dashed var(--amber-dim);
-  transition: all var(--dur-fast);
-}
-.chalk-num:hover { color: var(--emergency-white); background: rgba(200,160,100,0.1); }
-
-/* ============================================================
-   RADIO OVERLAY — 通讯器展开
-   ============================================================ */
-#radio-overlay {
+#overlay {
   position: fixed; inset: 0; z-index: 300;
   display: none; align-items: center; justify-content: center;
 }
-#radio-overlay.open { display: flex; }
-#radio-backdrop {
+#overlay.open { display: flex; }
+#overlay-bg {
   position: absolute; inset: 0;
-  background: rgba(8,6,4,0.9);
+  background: rgba(4,3,2,0.88);
   animation: fadeIn 0.3s;
 }
-#radio-panel {
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+#overlay-panel {
   position: relative; z-index: 1;
-  width: 85vw; max-width: 600px; height: 70vh; max-height: 500px;
-  background: var(--bg-wall);
-  border: 2px solid var(--iron);
-  box-shadow: 0 0 60px rgba(0,0,0,0.7);
-  display: flex; flex-direction: column;
-  animation: panelSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 88vw; max-width: 720px; max-height: 82vh;
+  background: linear-gradient(180deg, #1a100c, #120a07);
+  border: 2px solid var(--iron-dark);
+  box-shadow: 0 0 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(100,40,20,0.1);
+  overflow-y: auto; padding: 28px 24px 24px;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-#radio-static {
-  height: 40px; display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-mono); font-size: 0.6rem;
-  letter-spacing: 2px; color: var(--copper-green);
-  background: var(--pipe-dark);
-  border-bottom: 1px solid var(--iron-dark);
-  overflow: hidden;
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+#overlay-close {
+  position: absolute; top: 8px; right: 14px;
+  font-size: 1rem; color: var(--blood-bright);
+  cursor: pointer; font-family: var(--font-display);
+  transition: color 0.2s;
 }
-#radio-messages {
-  flex: 1; overflow-y: auto; padding: 16px;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.radio-msg { max-width: 85%; padding: 8px 12px; font-size: 0.8rem; line-height: 1.6; }
-.radio-msg.user {
-  align-self: flex-end; background: rgba(30,20,15,0.6);
-  border: 1px solid var(--iron-dark); color: var(--chalk);
-}
-.radio-msg.ai {
-  align-self: flex-start; background: rgba(20,15,12,0.8);
-  border: 1px solid rgba(100,60,30,0.2); color: var(--amber-light);
-}
-.radio-msg.system {
-  align-self: center; font-size: 0.7rem; color: var(--chalk-dim);
-  font-style: italic; text-align: center;
-}
-#radio-input-area {
-  display: flex; gap: 6px; padding: 10px 16px;
-  border-top: 1px solid var(--iron-dark);
-  background: var(--pipe-dark);
-}
-#radio-input {
-  flex: 1; padding: 8px 12px;
-  background: rgba(10,8,6,0.8); color: var(--amber-light);
-  border: 1px solid var(--iron-dark); font-family: var(--font-body);
-  font-size: 0.82rem; outline: none;
-}
-#radio-input:focus { border-color: var(--rust); }
-#radio-input::placeholder { color: var(--chalk-dim); font-style: italic; }
-#radio-send {
-  padding: 8px 14px; background: var(--iron-dark);
-  color: var(--amber-light); border: 1px solid var(--iron);
-  font-family: var(--font-display); font-size: 0.72rem;
-  letter-spacing: 1px; cursor: pointer; transition: all var(--dur-fast);
-}
-#radio-send:hover { background: var(--rust); border-color: var(--rust-light); }
-#radio-close {
-  text-align: center; padding: 8px; font-family: var(--font-display);
-  font-size: 0.65rem; letter-spacing: 2px; color: var(--blood-bright);
-  cursor: pointer; border-top: 1px solid var(--iron-dark);
-  transition: color var(--dur-fast);
-}
-#radio-close:hover { color: var(--amber-light); }
+#overlay-close:hover { color: var(--amber); }
 
-/* ============================================================
-   WALL POLAROIDS — 小队照片
-   ============================================================ */
-.wall-polaroids {
-  display: flex; flex-direction: column; gap: 8px; z-index: 1;
+/* Overlay content styles */
+.ov-section {
+  margin-bottom: 16px;
+  border: 1px solid rgba(60,30,20,0.2);
+  background: rgba(10,6,4,0.5);
 }
-.polaroid {
-  background: #1e1a14; border: 1px solid var(--iron-dark);
-  padding: 6px 8px 4px;
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
-  transform: rotate(-1deg);
-  cursor: pointer; transition: all var(--dur-normal);
+.ov-section-header {
+  padding: 8px 14px; cursor: pointer;
+  background: rgba(16,10,7,0.6);
+  border-bottom: 1px solid rgba(60,30,20,0.15);
+  font-family: var(--font-display); font-size: 0.78rem;
+  letter-spacing: 2px; color: var(--amber);
+  display: flex; justify-content: space-between; align-items: center;
 }
-.polaroid:nth-child(even) { transform: rotate(1.5deg); }
-.polaroid:hover { transform: rotate(0deg) scale(1.03); border-color: var(--rust); }
-.polaroid-name {
-  font-family: var(--font-display); font-size: 0.7rem;
-  letter-spacing: 1px; color: var(--amber-light);
+.ov-section-body { padding: 12px 14px; }
+.ov-section-body.hidden { display: none; }
+.ov-row {
+  display: flex; justify-content: space-between; padding: 3px 0;
+  border-bottom: 1px dotted rgba(60,30,20,0.1);
+  font-size: 0.78rem;
 }
-.polaroid-info { font-size: 0.6rem; color: var(--chalk-dim); margin-top: 2px; }
+.ov-row:last-child { border-bottom: none; }
+.ov-row .ol { color: var(--chalk-dim); }
+.ov-row .ov { color: var(--amber); font-weight: 700; text-align: right; }
+.ov-tag {
+  display: inline-block; padding: 2px 8px; font-size: 0.62rem;
+  letter-spacing: 1px; font-weight: 700; margin: 1px;
+}
+.ov-tag.rust { background: rgba(120,50,20,0.2); color: var(--rust-light); border: 1px solid rgba(120,50,20,0.3); }
+.ov-tag.blood { background: rgba(100,15,8,0.25); color: var(--blood-bright); border: 1px solid rgba(120,20,10,0.3); }
+.ov-tag.iron { background: rgba(60,50,40,0.15); color: var(--iron); border: 1px solid rgba(60,50,40,0.2); }
+.ov-tag.copper { background: rgba(80,100,70,0.12); color: #6a9070; border: 1px solid rgba(80,100,70,0.2); }
 
-/* ============================================================
-   FLOOR ITEMS
-   ============================================================ */
-#floor-items {
-  position: absolute; bottom: 8px; left: 15%; right: 15%;
-  display: flex; gap: 16px; justify-content: center; z-index: 10;
-}
-.floor-item {
-  font-family: var(--font-display); font-size: 0.6rem;
-  color: var(--chalk-dim); cursor: pointer;
-  text-align: center; transition: all var(--dur-fast);
-  padding: 4px 8px;
-  border: 1px solid transparent;
-}
-.floor-item:hover { color: var(--amber-light); border-color: var(--iron-dark); background: rgba(20,15,10,0.5); }
-
-/* ============================================================
-   TOAST — 墙上浮现通知
-   ============================================================ */
-#toast-container {
-  position: fixed; top: 56px; right: 16px;
-  z-index: 9999; display: flex; flex-direction: column; gap: 6px;
-  pointer-events: none;
-}
-.toast {
-  padding: 8px 14px;
-  background: linear-gradient(135deg, rgba(20,16,12,0.95), rgba(30,20,15,0.98));
-  border: 1px solid var(--iron-dark); color: var(--chalk);
-  font-size: 0.75rem; font-family: var(--font-display); letter-spacing: 1px;
-  animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  max-width: 340px; pointer-events: auto;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
-}
-.toast.removing { animation: toastOut 0.3s forwards; }
-@keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* ============ Responsive ============ */
 @media (max-width: 768px) {
-  .wall { width: 22%; padding: 8px; gap: 8px; }
-  #far-door { width: 120px; height: 240px; top: 20%; }
-  .door-frame { width: 100px; height: 200px; }
-  #blood-text { font-size: 1.2rem; }
-  #wall-panel { gap: 3px; padding: 4px 6px; }
-  .panel-btn { padding: 4px 6px; }
+  .corridor-wall { width: 30%; }
+  #far-end { left: 28%; right: 28%; top: 22%; bottom: 28%; }
+  #hud-bar { gap: 10px; padding: 0 10px; }
+  .hud-track { width: 50px; }
+  .hud-num { font-size: 0.58rem; min-width: 40px; }
 }
 @media (max-width: 480px) {
-  .wall { width: 18%; padding: 4px; gap: 4px; }
-  #far-door { width: 80px; height: 160px; }
-  .door-frame { width: 70px; height: 140px; }
-  #blood-text { display: none; }
-  #detail-panel { width: 95vw; }
+  .corridor-wall { width: 22%; }
+  .door-plate { font-size: 0.5rem; letter-spacing: 1px; }
+  #far-end { left: 24%; right: 24%; }
+  #hud-bar { gap: 4px; padding: 0 6px; }
+  .hud-track { width: 36px; }
+  .hud-label { font-size: 0.5rem; width: 20px; }
+  .hud-num { font-size: 0.5rem; min-width: 30px; }
 }
